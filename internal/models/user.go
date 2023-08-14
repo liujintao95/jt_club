@@ -26,7 +26,7 @@ func (user *Users) ComparePassword(password string) bool {
 	}
 }
 
-func (user *Users) GetPassword() (string, error) {
+func (user *Users) GetPasswordHash() (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	return string(hash), err
 }

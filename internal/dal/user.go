@@ -16,14 +16,9 @@ func SelectUserThroughEmail(email string) (models.Users, error) {
 	return user, nil
 }
 
-func InsertUser(user *models.Users) error {
-	password, err := user.GetPassword()
-	if err != nil {
-		return fmt.Errorf("get password: %w", err)
-	}
+func InsertUser(user *models.Users, passwordHash string) error {
 	sql := "insert into user(uid, name, email, password) values (?,?,?,?)"
-
-	_, err = db.Conn.Exec(sql, user.Uid, user.Name, user.Email, password)
+	_, err := db.Conn.Exec(sql, user.Uid, user.Name, user.Email, passwordHash)
 	if err != nil {
 		return fmt.Errorf("insert user exec: %w", err)
 	}

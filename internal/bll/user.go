@@ -27,11 +27,19 @@ func Login(login *request.SignInRequest) (string, error) {
 
 func CreateUser(user *request.SignUpRequest) (string, error) {
 	uid := uuid.New().String()
-	err := dal.InsertUser(&models.Users{
+	userModel := &models.Users{
 		Uid:      uid,
 		Name:     user.Name,
 		Email:    user.Email,
 		Password: user.Password,
-	})
+	}
+	passwordHash, err := userModel.GetPasswordHash()
+	if err != nil {
+		return "", fmt.Errorf("get password: %w", err)
+	}
+	err = dal.InsertUser(userModel, passwordHash)
+	if err != nil {
+		return "", fmt.Errorf("insert user: %w", err)
+	}
 	return uid, err
 }
