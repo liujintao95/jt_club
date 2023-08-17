@@ -1,7 +1,7 @@
 package request
 
 type SignInRequest struct {
-	Email    string
+	Account  string
 	Password string
 }
 

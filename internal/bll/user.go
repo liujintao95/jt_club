@@ -11,7 +11,7 @@ import (
 )
 
 func Login(login *request.SignInRequest) (string, error) {
-	user, err := dal.SelectUserThroughEmail(login.Email)
+	user, err := dal.SelectUserThroughEmail(login.Account)
 	if err != nil {
 		return "", fmt.Errorf("select user: %w", err)
 	}
