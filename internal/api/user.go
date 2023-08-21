@@ -3,6 +3,7 @@ package api
 import (
 	"JT_CLUB/conf"
 	"JT_CLUB/internal/bll"
+	"JT_CLUB/internal/code"
 	"JT_CLUB/internal/constant"
 	"JT_CLUB/internal/parser/request"
 	"JT_CLUB/internal/parser/response"
@@ -11,16 +12,18 @@ import (
 )
 
 func SignIn(ctx *gin.Context) {
-	var login *request.SignInRequest
-	if err := ctx.ShouldBindJSON(login); err != nil {
-		_ = ctx.Error(err)
-		ctx.JSON(http.StatusBadRequest, response.FailMsg("登录信息不合规"))
+	var (
+		login request.SignInRequest
+		token string
+		err   error
+	)
+	if err = ctx.ShouldBindJSON(&login); err != nil {
+		response.Fail(ctx, "登录信息不合规", code.RequestDataError, err)
 		return
 	}
-	token, err := bll.Login(login)
+	token, err = bll.Login(&login)
 	if err != nil {
-		_ = ctx.Error(err)
-		ctx.JSON(http.StatusInternalServerError, response.FailMsg("登录失败"))
+		response.Fail(ctx, "登录失败", code.SignInError, err)
 		return
 	}
 	ctx.SetCookie(constant.TokenKey, token, conf.DefaultDuration, "/", "", false, true)
@@ -28,15 +31,16 @@ func SignIn(ctx *gin.Context) {
 }
 
 func SignUp(ctx *gin.Context) {
-	var newUser *request.SignUpRequest
-	if err := ctx.ShouldBindJSON(newUser); err != nil {
-		_ = ctx.Error(err)
-		ctx.JSON(http.StatusBadRequest, response.FailMsg("注册信息不合规"))
+	var (
+		newUser request.SignUpRequest
+		err     error
+	)
+	if err = ctx.ShouldBindJSON(&newUser); err != nil {
+		response.Fail(ctx, "注册信息不合规", code.RequestDataError, err)
 		return
 	}
-	if _, err := bll.CreateUser(newUser); err != nil {
-		_ = ctx.Error(err)
-		ctx.JSON(http.StatusInternalServerError, response.FailMsg("注册失败"))
+	if _, err = bll.CreateUser(&newUser); err != nil {
+		response.Fail(ctx, "注册失败", code.SignOnError, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, response.SuccessMsg(response.SignUpResponse{Email: newUser.Email}))

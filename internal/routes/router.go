@@ -34,8 +34,7 @@ func NewRouter() *gin.Engine {
 		user.POST("/sign_in", api.SignIn)
 		user.POST("/sign_up", api.SignUp)
 	}
-	msg := server.Group("/msg")
-	msg.Use(LoginRequired())
+	msg := server.Group("/msg", LoginRequired())
 	{
 		msg.POST("/socket", api.SocketClient)
 	}

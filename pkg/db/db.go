@@ -10,16 +10,19 @@ import (
 var Conn *sqlx.DB
 
 func InitDataBase() {
-	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
-		conf.Config.MySQL.User,
-		conf.Config.MySQL.Password,
-		conf.Config.MySQL.Host,
-		conf.Config.MySQL.Port,
-		conf.Config.MySQL.Name,
+	var (
+		err error
+		dsn = fmt.Sprintf(
+			"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
+			conf.Config.MySQL.User,
+			conf.Config.MySQL.Password,
+			conf.Config.MySQL.Host,
+			conf.Config.MySQL.Port,
+			conf.Config.MySQL.Name,
+		)
 	)
 	// 也可以使用MustConnect连接不成功就panic
-	Conn, err := sqlx.Connect("mysql", dsn)
+	Conn, err = sqlx.Connect("mysql", dsn)
 	if err != nil {
 		panic(err)
 	}

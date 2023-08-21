@@ -9,15 +9,20 @@ import (
 )
 
 func RunSocketClient(ctx *gin.Context, user *models.Users) error {
-	upGrader := websocket.Upgrader{
-		ReadBufferSize:  constant.ReadBufferSize,
-		WriteBufferSize: constant.WriteBufferSize,
-	}
-	ws, err := upGrader.Upgrade(ctx.Writer, ctx.Request, nil)
+	var (
+		client   *socket.Client
+		ws       *websocket.Conn
+		err      error
+		upGrader = websocket.Upgrader{
+			ReadBufferSize:  constant.ReadBufferSize,
+			WriteBufferSize: constant.WriteBufferSize,
+		}
+	)
+	ws, err = upGrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
 		return err
 	}
-	client := &socket.Client{
+	client = &socket.Client{
 		Conn: ws,
 		Uid:  user.Uid,
 		Name: user.Name,

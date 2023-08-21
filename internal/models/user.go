@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -11,7 +12,7 @@ type Users struct {
 	Name     string
 	Email    string
 	Password string
-	Avatar   string
+	Avatar   sql.NullString
 	Ctime    time.Time
 	Utime    time.Time
 	Deleted  int
