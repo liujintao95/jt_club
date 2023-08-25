@@ -2,9 +2,11 @@ package bll
 
 import (
 	"JT_CLUB/conf"
+	"JT_CLUB/internal/constant"
 	"JT_CLUB/internal/dal"
 	"JT_CLUB/internal/models"
 	"JT_CLUB/internal/parser/request"
+	"JT_CLUB/internal/parser/response"
 	"JT_CLUB/pkg/cache"
 	"JT_CLUB/pkg/db"
 	"fmt"
@@ -52,13 +54,85 @@ func CreateUser(user *request.SignUpRequest) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("get password: %w", err)
 	}
-	err = dal.SaveUser(db.Conn, userModel, passwordHash)
+	err = dal.SetUser(db.Conn, userModel, passwordHash)
 	if err != nil {
-		return "", fmt.Errorf("insert user: %w", err)
+		return "", fmt.Errorf("create user: %w", err)
 	}
-	return uid, err
+	return uid, nil
 }
 
-func GetContactList(user *models.User) {
+func SelectUser(currentUser *models.User, query string, isContact bool) ([]*response.UserInfo, error) {
+	var (
+		result []*response.UserInfo
+		users  []*models.User
+		err    error
+	)
+	if isContact {
+		users, err = dal.SelectContacts(db.Conn, currentUser, query)
+	} else {
+		users, err = dal.SelectUsers(db.Conn, query)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("select user: %w", err)
+	}
+	for _, user := range users {
+		result = append(result, &response.UserInfo{
+			Uid:    user.Uid,
+			Name:   user.Name,
+			Email:  user.Email,
+			Avatar: user.Avatar,
+		})
+	}
+	return result, nil
+}
 
+func GetContactList(user *models.User) ([]*response.ContactInfo, error) {
+	var (
+		result   []*response.ContactInfo
+		contacts []*models.UserContacts
+		err      error
+	)
+	contacts, err = dal.GetUserContacts(db.Conn, user.Uid)
+	if err != nil {
+		return nil, fmt.Errorf("get user contacts: %w", err)
+	}
+	for _, contact := range contacts {
+		contactInfo := &response.ContactInfo{
+			Cid:          contact.Cid,
+			ContactId:    contact.ContactId,
+			ContactType:  contact.ContactType,
+			ContactNotes: contact.ContactNotes,
+			LastMsg:      contact.LastMsg,
+			LastTime:     contact.LastTime,
+		}
+		if contact.ContactType == constant.ContactsUserType {
+			contactInfo.Name = contact.User.Name
+			contactInfo.Avatar = contact.User.Avatar
+		} else {
+			contactInfo.Name = contact.UserGroup.Name
+			contactInfo.Avatar = contact.UserGroup.Avatar
+		}
+		result = append(result, contactInfo)
+	}
+	return result, nil
+}
+
+func CreateContactRequest(currentUser *models.User, targetUser request.ContactRequest) (string, error) {
+	var (
+		err          error
+		requestId    = uuid.New().String()
+		requestModel = &models.ContactsRequest{
+			RequestId:   requestId,
+			Uid:         currentUser.Uid,
+			ContactId:   targetUser.Uid,
+			ContactType: constant.ContactsUserType,
+			Status:      constant.RequestWaitStatus,
+			Notice:      targetUser.Notice,
+		}
+	)
+	err = dal.SetContactRequest(db.Conn, requestModel)
+	if err != nil {
+		return "", fmt.Errorf("create contacts_request: %w", err)
+	}
+	return requestId, nil
 }

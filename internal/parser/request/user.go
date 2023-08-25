@@ -10,3 +10,18 @@ type SignUpRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+type UserSelect struct {
+	Query     string `json:"query"`
+	IsContact bool   `json:"is_contact"`
+}
+
+type ContactRequest struct {
+	Uid    string `json:"uid"`
+	Notice string `json:"notice"`
+}
+
+type ContactCommit struct {
+	RequestId string `json:"request_id"`
+	Status    string `json:"status"`
+}

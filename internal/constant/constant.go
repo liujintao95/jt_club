@@ -41,3 +41,9 @@ const (
 	ContactsUserType  = iota
 	ContactsGroupType = iota
 )
+
+const (
+	RequestWaitStatus   = iota
+	RequestAgreeStatus  = iota
+	RequestRefuseStatus = iota
+)

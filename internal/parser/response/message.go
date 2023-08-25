@@ -20,6 +20,14 @@ func SuccessMsg(data any) *MsgResponse {
 	return msg
 }
 
+func Success() *MsgResponse {
+	msg := &MsgResponse{
+		Code: 0,
+		Msg:  "SUCCESS",
+	}
+	return msg
+}
+
 func FailMsg(msg string, code int) *MsgResponse {
 	msgObj := &MsgResponse{
 		Code: code,

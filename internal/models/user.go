@@ -46,6 +46,7 @@ type UserGroup struct {
 
 type UserContacts struct {
 	Id           int64
+	Cid          string
 	Uid          string
 	ContactId    string
 	ContactType  int
@@ -57,4 +58,17 @@ type UserContacts struct {
 	Deleted      int
 	User         `db:"user"`
 	UserGroup    `db:"user_group"`
+}
+
+type ContactsRequest struct {
+	Id          int64
+	RequestId   string
+	Uid         string
+	ContactId   string
+	ContactType int
+	Status      int
+	Notice      string
+	Ctime       time.Time
+	Utime       time.Time
+	Deleted     int
 }
