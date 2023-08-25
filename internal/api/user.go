@@ -43,5 +43,13 @@ func SignUp(ctx *gin.Context) {
 		response.Fail(ctx, "注册失败", code.SignOnError, err)
 		return
 	}
-	ctx.JSON(http.StatusCreated, response.SuccessMsg(response.SignUpResponse{Email: newUser.Email}))
+	ctx.JSON(http.StatusCreated, response.SuccessMsg(response.SignUp{Email: newUser.Email}))
+}
+
+func ContactList(ctx *gin.Context) {
+	var (
+		currentUser any
+		err         error
+	)
+	currentUser, _ = ctx.Get(constant.CurrentUserKey)
 }

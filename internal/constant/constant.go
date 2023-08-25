@@ -36,3 +36,8 @@ const (
 	ReadBufferSize  = 1024
 	WriteBufferSize = 1024
 )
+
+const (
+	ContactsUserType  = iota
+	ContactsGroupType = iota
+)

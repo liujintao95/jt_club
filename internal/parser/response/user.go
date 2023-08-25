@@ -1,9 +1,9 @@
 package response
 
-type SignUpResponse struct {
+type SignUp struct {
 	Email string
 }
 
-type SignInResponse struct {
+type SignIn struct {
 	Token string
 }

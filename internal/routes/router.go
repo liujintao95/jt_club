@@ -29,10 +29,11 @@ func NewRouter() *gin.Engine {
 	server.Use(ZapLogger(log.Logger))
 	server.Use(ZapRecovery(log.Logger, true))
 
-	user := server.Group("/user")
+	server.POST("/sign_in", api.SignIn)
+	server.POST("/sign_up", api.SignUp)
+	user := server.Group("/user", LoginRequired())
 	{
-		user.POST("/sign_in", api.SignIn)
-		user.POST("/sign_up", api.SignUp)
+		user.POST("/contact/list", api.ContactList)
 	}
 	msg := server.Group("/msg", LoginRequired())
 	{
@@ -135,7 +136,7 @@ func ZapRecovery(lg *zap.Logger, stack bool) gin.HandlerFunc {
 						zap.String("request", string(httpRequest)),
 					)
 					// If the connection is dead, we can't write a status to it.
-					ctx.Error(err.(error)) // nolint: err check
+					_ = ctx.Error(err.(error)) // nolint: err check
 					ctx.Abort()
 					return
 				}
@@ -161,7 +162,7 @@ func ZapRecovery(lg *zap.Logger, stack bool) gin.HandlerFunc {
 
 func LoginRequired() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var currentUser *models.Users
+		var currentUser *models.User
 		token, err := ctx.Cookie(constant.TokenKey)
 		if err != nil {
 			ctx.Status(http.StatusUnauthorized)

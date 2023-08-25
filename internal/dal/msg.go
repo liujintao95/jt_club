@@ -5,7 +5,7 @@ import (
 	"JT_CLUB/pkg/db"
 )
 
-func InsertMsg(msg *models.Message) error {
+func SaveMsg(session db.Session, msg *models.Message) error {
 	var (
 		err error
 		sql = `
@@ -15,7 +15,7 @@ func InsertMsg(msg *models.Message) error {
 			) values (?,?,?,?,?,?,?,?,?,?,?,?)
 		`
 	)
-	_, err = db.Conn.Exec(sql,
+	_, err = session.Exec(sql,
 		msg.MessageId, msg.Avatar, msg.FromUsername, msg.From, msg.To, msg.Content,
 		msg.ContentType, msg.Type, msg.MessageType, msg.Url, msg.FileSuffix, msg.FilePath,
 	)

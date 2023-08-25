@@ -16,7 +16,7 @@ func SocketClient(ctx *gin.Context) {
 		err         error
 	)
 	currentUser, _ = ctx.Get(constant.CurrentUserKey)
-	err = bll.RunSocketClient(ctx, currentUser.(*models.Users))
+	err = bll.RunSocketClient(ctx, currentUser.(*models.User))
 	if err != nil {
 		response.Fail(ctx, "启动聊天服务失败", code.RunClientError, err)
 		return

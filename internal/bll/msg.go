@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func RunSocketClient(ctx *gin.Context, user *models.Users) error {
+func RunSocketClient(ctx *gin.Context, user *models.User) error {
 	var (
 		client   *socket.Client
 		ws       *websocket.Conn

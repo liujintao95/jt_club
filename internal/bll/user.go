@@ -6,17 +6,18 @@ import (
 	"JT_CLUB/internal/models"
 	"JT_CLUB/internal/parser/request"
 	"JT_CLUB/pkg/cache"
+	"JT_CLUB/pkg/db"
 	"fmt"
 	"github.com/google/uuid"
 )
 
 func Login(login *request.SignInRequest) (string, error) {
 	var (
-		user models.Users
+		user models.User
 		ok   bool
 		err  error
 	)
-	user, err = dal.SelectUserThroughEmail(login.Account)
+	user, err = dal.GetUserByEmail(db.Conn, login.Account)
 	if err != nil {
 		return "", fmt.Errorf("select user: %w", err)
 	}
@@ -32,18 +33,18 @@ func Login(login *request.SignInRequest) (string, error) {
 
 func CreateUser(user *request.SignUpRequest) (string, error) {
 	var (
-		currentUser  models.Users
+		currentUser  models.User
 		passwordHash string
 		err          error
 		uid          = uuid.New().String()
-		userModel    = &models.Users{
+		userModel    = &models.User{
 			Uid:      uid,
 			Name:     user.Name,
 			Email:    user.Email,
 			Password: user.Password,
 		}
 	)
-	currentUser, _ = dal.SelectUserThroughEmail(user.Email)
+	currentUser, _ = dal.GetUserByEmail(db.Conn, user.Email)
 	if currentUser.Uid != "" {
 		return "", fmt.Errorf("%s already exists", user.Email)
 	}
@@ -51,9 +52,13 @@ func CreateUser(user *request.SignUpRequest) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("get password: %w", err)
 	}
-	err = dal.InsertUser(userModel, passwordHash)
+	err = dal.SaveUser(db.Conn, userModel, passwordHash)
 	if err != nil {
 		return "", fmt.Errorf("insert user: %w", err)
 	}
 	return uid, err
+}
+
+func GetContactList(user *models.User) {
+
 }
