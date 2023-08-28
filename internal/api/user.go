@@ -8,6 +8,7 @@ import (
 	"JT_CLUB/internal/models"
 	"JT_CLUB/internal/parser/request"
 	"JT_CLUB/internal/parser/response"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -19,7 +20,7 @@ func SignIn(ctx *gin.Context) {
 		err   error
 	)
 	if err = ctx.ShouldBindJSON(&login); err != nil {
-		response.Fail(ctx, "登录信息不合规", code.RequestDataError, err)
+		response.FailRequest(ctx, err)
 		return
 	}
 	token, err = bll.Login(&login)
@@ -37,7 +38,7 @@ func SignUp(ctx *gin.Context) {
 		err     error
 	)
 	if err = ctx.ShouldBindJSON(&newUser); err != nil {
-		response.Fail(ctx, "注册信息不合规", code.RequestDataError, err)
+		response.FailRequest(ctx, err)
 		return
 	}
 	if _, err = bll.CreateUser(&newUser); err != nil {
@@ -56,7 +57,7 @@ func UserSelect(ctx *gin.Context) {
 	)
 	currentUser, _ = ctx.Get(constant.CurrentUserKey)
 	if err = ctx.ShouldBindJSON(&userSelect); err != nil {
-		response.Fail(ctx, "查询失败", code.RequestDataError, err)
+		response.FailRequest(ctx, err)
 		return
 	}
 	userList, err = bll.SelectUser(currentUser.(*models.User), userSelect.Query, userSelect.IsContact)
@@ -82,30 +83,55 @@ func ContactList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response.SuccessMsg(contactList))
 }
 
-func ContactRequest(ctx *gin.Context) {
+func ContactApplication(ctx *gin.Context) {
 	var (
 		currentUser any
-		targetUser  request.ContactRequest
+		application request.ContactApplication
 		err         error
 	)
+	if err = ctx.ShouldBindJSON(&application); err != nil {
+		response.FailRequest(ctx, err)
+		return
+	}
 	currentUser, _ = ctx.Get(constant.CurrentUserKey)
-	if _, err = bll.CreateContactRequest(currentUser.(*models.User), targetUser); err != nil {
+	if _, err = bll.CreateContactApplication(currentUser.(*models.User), application); err != nil {
 		response.Fail(ctx, "发送请求失败", code.ContactRequestError, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, response.Success())
 }
 
-func ContactCommit(ctx *gin.Context) {
+func ContactConfirm(ctx *gin.Context) {
 	var (
-		currentUser any
-		targetUser  request.ContactRequest
+		confirmInfo request.ContactConfirm
 		err         error
 	)
-	currentUser, _ = ctx.Get(constant.CurrentUserKey)
-	if _, err = bll.CreateContactRequest(currentUser.(*models.User), targetUser); err != nil {
-		response.Fail(ctx, "发送请求失败", code.ContactRequestError, err)
+	if err = ctx.ShouldBindJSON(&confirmInfo); err != nil {
+		response.FailRequest(ctx, err)
+		return
+	}
+	if confirmInfo.Status != constant.RequestAgreeStatus && confirmInfo.Status != constant.RequestRefuseStatus {
+		response.Fail(ctx, "请求信息不合规", code.RequestDataError, fmt.Errorf("status value error"))
+		return
+	}
+	if err = bll.UpdateContactApplicationStatus(confirmInfo); err != nil {
+		response.Fail(ctx, "发送失败", code.ContactRequestError, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, response.Success())
+}
+
+func ContactConfirmList(ctx *gin.Context) {
+	var (
+		confirmList []*response.ApplicationInfo
+		currentUser any
+		err         error
+	)
+	currentUser, _ = ctx.Get(constant.CurrentUserKey)
+	confirmList, err = bll.GetContactApplicationConfirmList(currentUser.(*models.User))
+	if err != nil {
+		response.Fail(ctx, "发送请求失败", code.ContactRequestError, err)
+		return
+	}
+	ctx.JSON(http.StatusCreated, response.SuccessMsg(confirmList))
 }

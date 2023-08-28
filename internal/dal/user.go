@@ -68,16 +68,6 @@ func SelectContacts(session db.Session, currentUser *models.User, query string) 
 	return contacts, err
 }
 
-func GetUserByUid(session db.Session, uid string) (*models.User, error) {
-	var (
-		user *models.User
-		err  error
-		sql  = `select * from user where uid=? and deleted = false`
-	)
-	err = session.Get(&user, sql, uid)
-	return user, err
-}
-
 func GetUserContacts(session db.Session, uid string) ([]*models.UserContacts, error) {
 	var (
 		contacts []*models.UserContacts
@@ -101,17 +91,64 @@ func GetUserContacts(session db.Session, uid string) ([]*models.UserContacts, er
 	return contacts, err
 }
 
-func SetContactRequest(session db.Session, ContactsRequest *models.ContactsRequest) error {
+func SetContactApplication(session db.Session, application *models.ContactApplication) error {
 	var (
 		err error
 		sql = `
-			insert into contacts_request(
-				request_id, uid, contact_id, contact_type, status, notice
+			insert into contact_application(
+				app_id, uid, contact_id, contact_type, status, notice
 			) values (?,?,?,?,?,?)`
 	)
 	_, err = session.Exec(sql,
-		ContactsRequest.RequestId, ContactsRequest.Uid, ContactsRequest.ContactId,
-		ContactsRequest.ContactType, ContactsRequest.Status, ContactsRequest.Notice,
+		application.AppId, application.Uid, application.ContactId,
+		application.ContactType, application.Status, application.Notice,
 	)
 	return err
+}
+
+func GetContactApplicationByAppId(session db.Session, appId string) (models.ContactApplication, error) {
+	var (
+		application models.ContactApplication
+		err         error
+		sql         = `
+			select *
+			from contact_application
+			where app_id = ?
+			and deleted = false
+		`
+	)
+	err = session.Get(application, sql, appId)
+	return application, err
+}
+
+func UpdateContactApplicationStatus(session db.Session, appId string, status int) error {
+	var (
+		err error
+		sql = `
+			update contact_application
+			set status = ?
+			where app_id = ?
+		`
+	)
+	_, err = session.Exec(sql, appId, status)
+	return err
+}
+
+func GetContactApplicationConfirmList(session db.Session, uid string) ([]*models.ContactApplication, error) {
+	var (
+		applications []*models.ContactApplication
+		err          error
+		sql          = `
+			select *
+			from contact_application
+			inner join user
+			on contact_application.uid = user.uid
+			and user.deleted = false
+			where contact_application.contact_id = ?
+			and contact_application.contact_type = ?
+			and	contact_application.deleted = false
+		`
+	)
+	err = session.Select(&applications, sql, constant.ContactsUserType, uid)
+	return applications, err
 }

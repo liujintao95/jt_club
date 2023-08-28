@@ -117,22 +117,64 @@ func GetContactList(user *models.User) ([]*response.ContactInfo, error) {
 	return result, nil
 }
 
-func CreateContactRequest(currentUser *models.User, targetUser request.ContactRequest) (string, error) {
+func CreateContactApplication(currentUser *models.User, application request.ContactApplication) (string, error) {
 	var (
 		err          error
-		requestId    = uuid.New().String()
-		requestModel = &models.ContactsRequest{
-			RequestId:   requestId,
+		appId        = uuid.New().String()
+		requestModel = &models.ContactApplication{
+			AppId:       appId,
 			Uid:         currentUser.Uid,
-			ContactId:   targetUser.Uid,
-			ContactType: constant.ContactsUserType,
+			ContactId:   application.ContactId,
+			ContactType: application.ContactType,
 			Status:      constant.RequestWaitStatus,
-			Notice:      targetUser.Notice,
+			Notice:      application.Notice,
 		}
 	)
-	err = dal.SetContactRequest(db.Conn, requestModel)
+	err = dal.SetContactApplication(db.Conn, requestModel)
 	if err != nil {
 		return "", fmt.Errorf("create contacts_request: %w", err)
 	}
-	return requestId, nil
+	return appId, nil
+}
+
+func UpdateContactApplicationStatus(confirmInfo request.ContactConfirm) error {
+	var (
+		application models.ContactApplication
+		err         error
+	)
+	application, err = dal.GetContactApplicationByAppId(db.Conn, confirmInfo.AppId)
+	if err != nil {
+		return fmt.Errorf("get application by app_id: %w", err)
+	}
+	if application.Status != constant.RequestWaitStatus {
+		return fmt.Errorf("application(%s) status(%s) error", application.AppId, application.Status)
+	}
+	err = dal.UpdateContactApplicationStatus(db.Conn, confirmInfo.AppId, confirmInfo.Status)
+	if err != nil {
+		return fmt.Errorf("update user status: %w", err)
+	}
+	return nil
+}
+
+func GetContactApplicationConfirmList(currentUser *models.User) ([]*response.ApplicationInfo, error) {
+	var (
+		result       []*response.ApplicationInfo
+		applications []*models.ContactApplication
+		err          error
+	)
+	applications, err = dal.GetContactApplicationConfirmList(db.Conn, currentUser.Uid)
+	if err != nil {
+		return nil, fmt.Errorf("get confirm list: %w", err)
+	}
+	for _, application := range applications {
+		result = append(result, &response.ApplicationInfo{
+			AppId:  application.AppId,
+			Uid:    application.Uid,
+			Name:   application.Applicant.Name,
+			Avatar: application.Applicant.Avatar,
+			Notice: application.Notice,
+			Status: application.Status,
+		})
+	}
+	return result, nil
 }

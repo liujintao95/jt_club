@@ -107,7 +107,7 @@ func (s *Server) sendSingleMsg(msg *protocol.Message) {
 }
 
 func (s *Server) sendGroupMsg(msg *protocol.Message) {
-	var users []*models.Users
+	var users []*models.User
 	sql := "SELECT `user`.* FROM `user` INNER JOIN user_group_map WHERE user_group_map.gid = ?"
 	err := db.Conn.Get(&users, sql, msg.To)
 	if err != nil {

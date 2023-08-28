@@ -16,12 +16,13 @@ type UserSelect struct {
 	IsContact bool   `json:"is_contact"`
 }
 
-type ContactRequest struct {
-	Uid    string `json:"uid"`
-	Notice string `json:"notice"`
+type ContactApplication struct {
+	ContactId   string `json:"contact_id"`
+	ContactType int    `json:"contact_type"`
+	Notice      string `json:"notice"`
 }
 
-type ContactCommit struct {
-	RequestId string `json:"request_id"`
-	Status    string `json:"status"`
+type ContactConfirm struct {
+	AppId  string `json:"app_id"`
+	Status int    `json:"status"`
 }

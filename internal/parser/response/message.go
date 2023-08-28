@@ -1,6 +1,7 @@
 package response
 
 import (
+	"JT_CLUB/internal/code"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
@@ -45,4 +46,8 @@ func Fail(ctx *gin.Context, respMsg string, respCode int, errMsg error) {
 	httpCode, _ = strconv.Atoi(strCode)
 	_ = ctx.Error(errMsg)
 	ctx.JSON(httpCode, FailMsg(respMsg, respCode))
+}
+
+func FailRequest(ctx *gin.Context, err error) {
+	Fail(ctx, "请求信息不合规", code.RequestDataError, err)
 }

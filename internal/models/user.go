@@ -44,6 +44,18 @@ type UserGroup struct {
 	Deleted int
 }
 
+type UserGroupMap struct {
+	Id        int64
+	MapId     string
+	Gid       string
+	Uid       string
+	Ctime     time.Time
+	Utime     time.Time
+	Deleted   int
+	User      User      `db:"user"`
+	UserGroup UserGroup `db:"user_group"`
+}
+
 type UserContacts struct {
 	Id           int64
 	Cid          string
@@ -56,13 +68,13 @@ type UserContacts struct {
 	Ctime        time.Time
 	Utime        time.Time
 	Deleted      int
-	User         `db:"user"`
-	UserGroup    `db:"user_group"`
+	User         User      `db:"user"`
+	UserGroup    UserGroup `db:"user_group"`
 }
 
-type ContactsRequest struct {
+type ContactApplication struct {
 	Id          int64
-	RequestId   string
+	AppId       string
 	Uid         string
 	ContactId   string
 	ContactType int
@@ -71,4 +83,5 @@ type ContactsRequest struct {
 	Ctime       time.Time
 	Utime       time.Time
 	Deleted     int
+	Applicant   User `db:"user"`
 }

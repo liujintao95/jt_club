@@ -30,3 +30,12 @@ type ContactInfo struct {
 	Name         string
 	Avatar       sql.NullString
 }
+
+type ApplicationInfo struct {
+	AppId  string
+	Uid    string
+	Name   string
+	Avatar sql.NullString
+	Notice string
+	Status int
+}

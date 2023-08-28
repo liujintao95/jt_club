@@ -34,8 +34,9 @@ func NewRouter() *gin.Engine {
 	user := server.Group("/user", LoginRequired())
 	{
 		user.POST("/select", api.UserSelect)
-		user.POST("/contact/request", api.ContactRequest)
-		user.POST("/contact/commit", api.ContactCommit)
+		user.POST("/contact/application", api.ContactApplication)
+		user.POST("/contact/confirm", api.ContactConfirm)
+		user.POST("/contact/confirm/list", api.ContactConfirmList)
 		user.POST("/contact/list", api.ContactList)
 	}
 	msg := server.Group("/msg", LoginRequired())
@@ -82,7 +83,7 @@ func ZapLogger(lg *zap.Logger) gin.HandlerFunc {
 		if ctx.Request.Method == "POST" {
 			// 把request的内容读取出来
 			bodyBytes, _ := io.ReadAll(ctx.Request.Body)
-			ctx.Request.Body.Close()
+			_ = ctx.Request.Body.Close()
 			// 把刚刚读出来的再写进去
 			ctx.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 			switch ctx.ContentType() {
