@@ -82,7 +82,7 @@ func InitLogger() {
 	// 开启文件及行号
 	development := zap.Development()
 	// 设置初始化字段,如：添加一个服务器名称
-	filed := zap.Fields(zap.String("application", "chat-room"))
+	filed := zap.Fields(zap.String("application", "jt_club"))
 	// 构造日志
 	Logger = zap.New(core, caller, development, filed)
 	Logger.Info("Logger init success")

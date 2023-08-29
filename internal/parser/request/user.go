@@ -11,6 +11,11 @@ type SignUpRequest struct {
 	Password string `json:"password"`
 }
 
+type UserEdit struct {
+	Name   string `json:"name"`
+	Avatar string `json:"avatar"`
+}
+
 type UserSelect struct {
 	Query     string `json:"query"`
 	IsContact bool   `json:"is_contact"`

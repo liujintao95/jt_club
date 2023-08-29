@@ -48,6 +48,25 @@ func SignUp(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, response.SuccessMsg(response.SignUp{Email: newUser.Email}))
 }
 
+func UserEdit(ctx *gin.Context) {
+	var (
+		currentUser any
+		editInfo    request.UserEdit
+		err         error
+	)
+	currentUser, _ = ctx.Get(constant.CurrentUserKey)
+	if err = ctx.ShouldBindJSON(&editInfo); err != nil {
+		response.FailRequest(ctx, err)
+		return
+	}
+	err = bll.UpdateUserInfo(currentUser.(*models.User), editInfo)
+	if err != nil {
+		response.Fail(ctx, "修改用户信息失败", code.UserEditError, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, response.Success())
+}
+
 func UserSelect(ctx *gin.Context) {
 	var (
 		currentUser any
@@ -111,7 +130,7 @@ func ContactConfirm(ctx *gin.Context) {
 		return
 	}
 	if confirmInfo.Status != constant.RequestAgreeStatus && confirmInfo.Status != constant.RequestRefuseStatus {
-		response.Fail(ctx, "请求信息不合规", code.RequestDataError, fmt.Errorf("status value error"))
+		response.FailRequest(ctx, fmt.Errorf("status value error"))
 		return
 	}
 	if err = bll.UpdateContactApplicationStatus(confirmInfo); err != nil {

@@ -33,6 +33,7 @@ func NewRouter() *gin.Engine {
 	server.POST("/sign_up", api.SignUp)
 	user := server.Group("/user", LoginRequired())
 	{
+		user.POST("/edit", api.UserEdit)
 		user.POST("/select", api.UserSelect)
 		user.POST("/contact/application", api.ContactApplication)
 		user.POST("/contact/confirm", api.ContactConfirm)

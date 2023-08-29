@@ -61,6 +61,17 @@ func CreateUser(user *request.SignUpRequest) (string, error) {
 	return uid, nil
 }
 
+func UpdateUserInfo(currentUser *models.User, edit request.UserEdit) error {
+	var (
+		err error
+	)
+	err = dal.UpdateUserInfo(db.Conn, currentUser.Uid, edit.Name, edit.Avatar)
+	if err != nil {
+		return fmt.Errorf("update user info: %w", err)
+	}
+	return nil
+}
+
 func SelectUser(currentUser *models.User, query string, isContact bool) ([]*response.UserInfo, error) {
 	var (
 		result []*response.UserInfo
@@ -151,7 +162,7 @@ func UpdateContactApplicationStatus(confirmInfo request.ContactConfirm) error {
 	}
 	err = dal.UpdateContactApplicationStatus(db.Conn, confirmInfo.AppId, confirmInfo.Status)
 	if err != nil {
-		return fmt.Errorf("update user status: %w", err)
+		return fmt.Errorf("update application status: %w", err)
 	}
 	return nil
 }

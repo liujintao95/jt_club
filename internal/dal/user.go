@@ -25,6 +25,19 @@ func SetUser(session db.Session, user *models.User, passwordHash string) error {
 	return err
 }
 
+func UpdateUserInfo(session db.Session, uid string, name string, avatar string) error {
+	var (
+		err error
+		sql = `
+			update user
+			set name = ?, avatar = ?
+			where uid = ?
+		`
+	)
+	_, err = session.Exec(sql, name, avatar, uid)
+	return err
+}
+
 func SelectUsers(session db.Session, query string) ([]*models.User, error) {
 	var (
 		user      []*models.User
