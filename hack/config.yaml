@@ -1,0 +1,21 @@
+
+# CLI tool, only in development environment.
+# https://goframe.org/pages/viewpage.action?pageId=3673173
+gfcli:
+  gen:
+    dao:
+      - link: "mysql:root:123456@tcp(127.0.0.1:3306)/jt_chat"
+
+  docker:
+    build: "-a amd64 -s linux -p temp -ew"
+    tagPrefixes:
+      - my.image.pub/my-app
+
+redis:
+  default:
+    address: 127.0.0.1:6379
+
+logger:
+  path:    "./logs"
+  level:   "all"
+  stdout:  false
