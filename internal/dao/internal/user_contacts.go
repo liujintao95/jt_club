@@ -23,9 +23,9 @@ type UserContactsColumns struct {
 	Id           string //
 	Cid          string //
 	Uid          string //
-	Ctime        string //
-	Utime        string //
-	Deleted      string //
+	CreatedAt    string //
+	UpdatedAt    string //
+	DeletedAt    string //
 	ContactId    string //
 	ContactType  string //
 	ContactNotes string //
@@ -38,9 +38,9 @@ var userContactsColumns = UserContactsColumns{
 	Id:           "id",
 	Cid:          "cid",
 	Uid:          "uid",
-	Ctime:        "ctime",
-	Utime:        "utime",
-	Deleted:      "deleted",
+	CreatedAt:    "created_at",
+	UpdatedAt:    "updated_at",
+	DeletedAt:    "deleted_at",
 	ContactId:    "contact_id",
 	ContactType:  "contact_type",
 	ContactNotes: "contact_notes",

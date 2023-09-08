@@ -2,6 +2,8 @@ package user
 
 import (
 	"context"
+	"github.com/gogf/gf/v2/errors/gcode"
+	"github.com/gogf/gf/v2/errors/gerror"
 	"jt_chat/internal/model"
 	"jt_chat/internal/service"
 
@@ -15,7 +17,7 @@ func (c *ControllerV1) Register(ctx context.Context, req *v1.RegisterReq) (res *
 		Password: req.Password,
 	})
 	if err != nil {
-		return nil, err
+		return nil, gerror.NewCode(gcode.CodeInvalidParameter, err.Error())
 	}
 	return &v1.RegisterRes{Email: req.Email}, nil
 }

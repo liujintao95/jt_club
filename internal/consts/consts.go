@@ -72,3 +72,7 @@ const (
 	ReadBufferSize  = 1024
 	WriteBufferSize = 1024
 )
+
+const (
+	EmailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+)

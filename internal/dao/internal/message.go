@@ -22,9 +22,9 @@ type MessageDao struct {
 type MessageColumns struct {
 	Id           string //
 	MessageId    string //
-	Ctime        string //
-	Utime        string //
-	Deleted      string //
+	CreatedAt    string //
+	UpdatedAt    string //
+	DeletedAt    string //
 	Avatar       string //
 	FromUsername string //
 	From         string //
@@ -42,9 +42,9 @@ type MessageColumns struct {
 var messageColumns = MessageColumns{
 	Id:           "id",
 	MessageId:    "message_id",
-	Ctime:        "ctime",
-	Utime:        "utime",
-	Deleted:      "deleted",
+	CreatedAt:    "created_at",
+	UpdatedAt:    "updated_at",
+	DeletedAt:    "deleted_at",
 	Avatar:       "avatar",
 	FromUsername: "from_username",
 	From:         "from",

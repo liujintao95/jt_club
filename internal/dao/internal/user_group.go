@@ -20,28 +20,28 @@ type UserGroupDao struct {
 
 // UserGroupColumns defines and stores column names for table user_group.
 type UserGroupColumns struct {
-	Id      string //
-	Gid     string //
-	Ctime   string //
-	Utime   string //
-	Deleted string //
-	Name    string //
-	AdminId string //
-	Notice  string //
-	Avatar  string //
+	Id        string //
+	Gid       string //
+	CreatedAt string //
+	UpdatedAt string //
+	DeletedAt string //
+	Name      string //
+	AdminId   string //
+	Notice    string //
+	Avatar    string //
 }
 
 // userGroupColumns holds the columns for table user_group.
 var userGroupColumns = UserGroupColumns{
-	Id:      "id",
-	Gid:     "gid",
-	Ctime:   "ctime",
-	Utime:   "utime",
-	Deleted: "deleted",
-	Name:    "name",
-	AdminId: "admin_id",
-	Notice:  "notice",
-	Avatar:  "avatar",
+	Id:        "id",
+	Gid:       "gid",
+	CreatedAt: "created_at",
+	UpdatedAt: "updated_at",
+	DeletedAt: "deleted_at",
+	Name:      "name",
+	AdminId:   "admin_id",
+	Notice:    "notice",
+	Avatar:    "avatar",
 }
 
 // NewUserGroupDao creates and returns a new DAO object for table data access.

@@ -13,16 +13,17 @@ func (c *ControllerV1) GetList(ctx context.Context, req *v1.GetListReq) (res *v1
 		out model.GetListOutput
 	)
 	out, err = service.User().GetList(ctx, model.GetListInput{
-		NameOrUid: req.NameOrId,
-		Page:      req.Page,
-		Size:      req.Size,
+		NameOrId: req.NameOrId,
+		Page:     req.Page,
+		Size:     req.Size,
 	})
 	if err != nil {
 		return nil, err
 	}
-	res.Users = out.Users
-	res.Page = out.Page
-	res.Size = out.Size
-	res.Total = out.Total
-	return res, nil
+	return &v1.GetListRes{
+		Page:  out.Page,
+		Size:  out.Size,
+		Total: out.Total,
+		Users: out.Users,
+	}, nil
 }

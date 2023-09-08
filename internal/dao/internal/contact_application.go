@@ -21,9 +21,9 @@ type ContactApplicationDao struct {
 // ContactApplicationColumns defines and stores column names for table contact_application.
 type ContactApplicationColumns struct {
 	Id          string //
-	Ctime       string //
-	Utime       string //
-	Deleted     string //
+	CreatedAt   string //
+	UpdatedAt   string //
+	DeletedAt   string //
 	AppId       string //
 	Uid         string //
 	ContactId   string //
@@ -35,9 +35,9 @@ type ContactApplicationColumns struct {
 // contactApplicationColumns holds the columns for table contact_application.
 var contactApplicationColumns = ContactApplicationColumns{
 	Id:          "id",
-	Ctime:       "ctime",
-	Utime:       "utime",
-	Deleted:     "deleted",
+	CreatedAt:   "created_at",
+	UpdatedAt:   "updated_at",
+	DeletedAt:   "deleted_at",
 	AppId:       "app_id",
 	Uid:         "uid",
 	ContactId:   "contact_id",

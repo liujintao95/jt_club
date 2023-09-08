@@ -11,14 +11,14 @@ import (
 
 // UserGroup is the golang structure of table user_group for DAO operations like Where/Data.
 type UserGroup struct {
-	g.Meta  `orm:"table:user_group, do:true"`
-	Id      interface{} //
-	Gid     interface{} //
-	Ctime   *gtime.Time //
-	Utime   *gtime.Time //
-	Deleted interface{} //
-	Name    interface{} //
-	AdminId interface{} //
-	Notice  interface{} //
-	Avatar  interface{} //
+	g.Meta    `orm:"table:user_group, do:true"`
+	Id        interface{} //
+	Gid       interface{} //
+	CreatedAt *gtime.Time //
+	UpdatedAt *gtime.Time //
+	DeletedAt interface{} //
+	Name      interface{} //
+	AdminId   interface{} //
+	Notice    interface{} //
+	Avatar    interface{} //
 }

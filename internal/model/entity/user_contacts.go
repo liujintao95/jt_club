@@ -13,9 +13,9 @@ type UserContacts struct {
 	Id           uint64      `json:"id"           ` //
 	Cid          string      `json:"cid"          ` //
 	Uid          string      `json:"uid"          ` //
-	Ctime        *gtime.Time `json:"ctime"        ` //
-	Utime        *gtime.Time `json:"utime"        ` //
-	Deleted      uint        `json:"deleted"      ` //
+	CreatedAt    *gtime.Time `json:"createdAt"    ` //
+	UpdatedAt    *gtime.Time `json:"updatedAt"    ` //
+	DeletedAt    uint        `json:"deletedAt"    ` //
 	ContactId    string      `json:"contactId"    ` //
 	ContactType  uint        `json:"contactType"  ` //
 	ContactNotes string      `json:"contactNotes" ` //

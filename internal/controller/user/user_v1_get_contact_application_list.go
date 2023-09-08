@@ -19,9 +19,10 @@ func (c *ControllerV1) GetContactApplicationList(ctx context.Context, req *v1.Ge
 	if err != nil {
 		return nil, err
 	}
-	res.Applications = out.Applications
-	res.Page = out.Page
-	res.Size = out.Size
-	res.Total = out.Total
-	return res, nil
+	return &v1.GetContactApplicationListRes{
+		Applications: out.Applications,
+		Page:         out.Page,
+		Size:         out.Size,
+		Total:        out.Total,
+	}, nil
 }

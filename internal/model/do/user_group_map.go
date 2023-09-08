@@ -11,12 +11,12 @@ import (
 
 // UserGroupMap is the golang structure of table user_group_map for DAO operations like Where/Data.
 type UserGroupMap struct {
-	g.Meta  `orm:"table:user_group_map, do:true"`
-	Id      interface{} //
-	Ctime   *gtime.Time //
-	Utime   *gtime.Time //
-	Deleted interface{} //
-	MapId   interface{} //
-	Gid     interface{} //
-	Uid     interface{} //
+	g.Meta    `orm:"table:user_group_map, do:true"`
+	Id        interface{} //
+	CreatedAt *gtime.Time //
+	UpdatedAt *gtime.Time //
+	DeletedAt interface{} //
+	MapId     interface{} //
+	Gid       interface{} //
+	Uid       interface{} //
 }

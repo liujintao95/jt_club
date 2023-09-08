@@ -13,9 +13,9 @@ import (
 type ContactApplication struct {
 	g.Meta      `orm:"table:contact_application, do:true"`
 	Id          interface{} //
-	Ctime       *gtime.Time //
-	Utime       *gtime.Time //
-	Deleted     interface{} //
+	CreatedAt   *gtime.Time //
+	UpdatedAt   *gtime.Time //
+	DeletedAt   interface{} //
 	AppId       interface{} //
 	Uid         interface{} //
 	ContactId   interface{} //

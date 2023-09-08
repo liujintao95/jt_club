@@ -14,9 +14,9 @@ type Message struct {
 	g.Meta       `orm:"table:message, do:true"`
 	Id           interface{} //
 	MessageId    interface{} //
-	Ctime        *gtime.Time //
-	Utime        *gtime.Time //
-	Deleted      interface{} //
+	CreatedAt    *gtime.Time //
+	UpdatedAt    *gtime.Time //
+	DeletedAt    interface{} //
 	Avatar       interface{} //
 	FromUsername interface{} //
 	From         interface{} //

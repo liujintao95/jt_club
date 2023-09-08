@@ -20,24 +20,24 @@ type UserGroupMapDao struct {
 
 // UserGroupMapColumns defines and stores column names for table user_group_map.
 type UserGroupMapColumns struct {
-	Id      string //
-	Ctime   string //
-	Utime   string //
-	Deleted string //
-	MapId   string //
-	Gid     string //
-	Uid     string //
+	Id        string //
+	CreatedAt string //
+	UpdatedAt string //
+	DeletedAt string //
+	MapId     string //
+	Gid       string //
+	Uid       string //
 }
 
 // userGroupMapColumns holds the columns for table user_group_map.
 var userGroupMapColumns = UserGroupMapColumns{
-	Id:      "id",
-	Ctime:   "ctime",
-	Utime:   "utime",
-	Deleted: "deleted",
-	MapId:   "map_id",
-	Gid:     "gid",
-	Uid:     "uid",
+	Id:        "id",
+	CreatedAt: "created_at",
+	UpdatedAt: "updated_at",
+	DeletedAt: "deleted_at",
+	MapId:     "map_id",
+	Gid:       "gid",
+	Uid:       "uid",
 }
 
 // NewUserGroupMapDao creates and returns a new DAO object for table data access.

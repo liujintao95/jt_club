@@ -116,8 +116,6 @@ func (s *Server) sendGroupMsg(msg *protocol.Message) {
 	)
 	err = dao.UserGroupMap.Ctx(s.ctx).Where(
 		dao.UserGroupMap.Columns().Gid, msg.To,
-	).Where(
-		dao.UserGroupMap.Columns().Deleted, false,
 	).Scan(groupUsers)
 	if err != nil {
 		g.Log().Error(s.ctx, "socket get users:"+err.Error())

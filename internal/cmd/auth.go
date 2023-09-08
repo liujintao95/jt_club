@@ -11,7 +11,6 @@ import (
 	"jt_chat/internal/model/entity"
 	"jt_chat/utility"
 	"jt_chat/utility/response"
-	"strconv"
 )
 
 type LoginRes struct {
@@ -41,17 +40,17 @@ func StartGToken() (gfToken *gtoken.GfToken, err error) {
 }
 
 func loginFunc(r *ghttp.Request) (string, interface{}) {
-	name := r.Get("name").String()
+	account := r.Get("account").String()
 	password := r.Get("password").String()
 	ctx := context.TODO()
 
-	if name == "" || password == "" {
+	if account == "" || password == "" {
 		r.Response.WriteJson(gtoken.Fail(consts.ErrLoginMsg))
 		r.ExitAll()
 	}
 
 	userInfo := entity.User{}
-	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Name, name).Scan(&userInfo)
+	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Email, account).Scan(&userInfo)
 	if err != nil {
 		r.Response.WriteJson(gtoken.Fail(consts.ErrLoginMsg))
 		r.ExitAll()
@@ -60,8 +59,7 @@ func loginFunc(r *ghttp.Request) (string, interface{}) {
 		r.Response.WriteJson(gtoken.Fail(consts.ErrLoginMsg))
 		r.ExitAll()
 	}
-
-	return strconv.Itoa(int(userInfo.Id)), userInfo
+	return userInfo.Uid, userInfo
 }
 
 func loginAfterFunc(r *ghttp.Request, respData gtoken.Resp) {
@@ -75,7 +73,7 @@ func loginAfterFunc(r *ghttp.Request, respData gtoken.Resp) {
 		userId := respData.GetString("userKey")
 		//根据id获得登录用户其他信息
 		userInfo := entity.User{}
-		err := dao.User.Ctx(context.TODO()).WherePri(userId).Scan(&userInfo)
+		err := dao.User.Ctx(context.TODO()).Where(dao.User.Columns().Uid, userId).Scan(&userInfo)
 		if err != nil {
 			return
 		}
@@ -87,12 +85,12 @@ func loginAfterFunc(r *ghttp.Request, respData gtoken.Resp) {
 		data.Name = userInfo.Name
 		data.Avatar = userInfo.Avatar
 		data.Email = userInfo.Email
+		data.Uid = userInfo.Uid
 		response.JsonExit(r, 0, "", data)
 	}
 	return
 }
 
-// 登录鉴权中间件for前台
 func authAfterFunc(r *ghttp.Request, respData gtoken.Resp) {
 	var userInfo entity.User
 	err := gconv.Struct(respData.GetString("data"), &userInfo)
@@ -100,8 +98,7 @@ func authAfterFunc(r *ghttp.Request, respData gtoken.Resp) {
 		response.Auth(r)
 		return
 	}
-
-	r.SetCtxVar(consts.CtxUserId, userInfo.Id)
+	r.SetCtxVar(consts.CtxUserId, userInfo.Uid)
 	r.SetCtxVar(consts.CtxUserName, userInfo.Name)
 	r.SetCtxVar(consts.CtxUserAvatar, userInfo.Avatar)
 	r.SetCtxVar(consts.CtxUserEmail, userInfo.Email)

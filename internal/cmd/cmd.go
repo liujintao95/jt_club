@@ -16,6 +16,7 @@ var (
 		Brief: "start http server",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
+			s.Use(ghttp.MiddlewareCORS)
 			s.Use(ghttp.MiddlewareHandlerResponse)
 			token, err := StartGToken()
 			if err != nil {

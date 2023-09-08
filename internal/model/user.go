@@ -27,9 +27,9 @@ type UpdateOutput struct {
 }
 
 type GetListInput struct {
-	NameOrUid string `json:"name_or_uid" description:"名称或UID"`
-	Page      int    `json:"page" description:"分页码"`
-	Size      int    `json:"size" description:"分页数量"`
+	NameOrId string `json:"name_or_id" description:"名称或ID"`
+	Page     int    `json:"page" description:"分页码"`
+	Size     int    `json:"size" description:"分页数量"`
 }
 
 type UserInfoItem struct {
@@ -48,9 +48,9 @@ type GetListOutput struct {
 }
 
 type GetContactListInput struct {
-	NameOrUid string `json:"name_or_uid" description:"名称或UID"`
-	Page      int    `json:"page" description:"分页码"`
-	Size      int    `json:"size" description:"分页数量"`
+	NameOrId string `json:"name_or_id" description:"名称或ID"`
+	Page     int    `json:"page" description:"分页码"`
+	Size     int    `json:"size" description:"分页数量"`
 }
 
 type UserGroupItem struct {
@@ -86,14 +86,13 @@ type GetContactApplicationListInput struct {
 }
 
 type ContactApplicationItem struct {
-	g.Meta `orm:"table:contact_application"`
-	AppId  string
-	Uid    string
-	Name   string
-	Avatar string
-	Notice string
-	Status int
-	User   UserInfoItem `json:"user" orm:"with:uid=uid"`
+	g.Meta      `orm:"table:contact_application"`
+	AppId       string
+	Uid         string
+	ContactId   string
+	ContactType string
+	Status      int
+	User        *UserInfoItem `orm:"with:uid=uid"`
 }
 
 type GetContactApplicationListOutput struct {

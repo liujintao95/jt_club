@@ -10,13 +10,13 @@ import (
 
 // UserGroup is the golang structure for table user_group.
 type UserGroup struct {
-	Id      uint64      `json:"id"      ` //
-	Gid     string      `json:"gid"     ` //
-	Ctime   *gtime.Time `json:"ctime"   ` //
-	Utime   *gtime.Time `json:"utime"   ` //
-	Deleted uint        `json:"deleted" ` //
-	Name    string      `json:"name"    ` //
-	AdminId string      `json:"adminId" ` //
-	Notice  string      `json:"notice"  ` //
-	Avatar  string      `json:"avatar"  ` //
+	Id        uint64      `json:"id"        ` //
+	Gid       string      `json:"gid"       ` //
+	CreatedAt *gtime.Time `json:"createdAt" ` //
+	UpdatedAt *gtime.Time `json:"updatedAt" ` //
+	DeletedAt uint        `json:"deletedAt" ` //
+	Name      string      `json:"name"      ` //
+	AdminId   string      `json:"adminId"   ` //
+	Notice    string      `json:"notice"    ` //
+	Avatar    string      `json:"avatar"    ` //
 }

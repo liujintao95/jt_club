@@ -2,7 +2,9 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/google/uuid"
 	"jt_chat/internal/consts"
@@ -11,6 +13,7 @@ import (
 	"jt_chat/internal/model/entity"
 	"jt_chat/internal/service"
 	"jt_chat/utility"
+	"regexp"
 )
 
 type sUser struct{}
@@ -24,22 +27,37 @@ func New() *sUser {
 
 func (s *sUser) Register(ctx context.Context, in model.RegisterInput) (out model.RegisterOutput, err error) {
 	var (
-		currentUser entity.User
+		maxUid      float64
 		uid         string
+		count       int
 		newUser     entity.User
+		emailRegexp *regexp.Regexp
 	)
-	uid = uuid.New().String()
+	emailRegexp = regexp.MustCompile(consts.EmailRegex)
+	if !emailRegexp.MatchString(in.Email) {
+		err = fmt.Errorf("email format error")
+		return
+	}
+	maxUid, err = dao.User.Ctx(ctx).Max(dao.User.Columns().Uid)
+	uid = gconv.String(gconv.Int(maxUid) + 1)
+	if err != nil {
+		return
+	}
 	newUser = entity.User{
 		Uid:   uid,
 		Name:  in.Name,
 		Email: in.Email,
 	}
-	err = dao.User.Ctx(ctx).Where(dao.User.Columns().Email, in.Email).Scan(&currentUser)
+	count, err = dao.User.Ctx(ctx).Where(dao.User.Columns().Email, in.Email).Count()
 	if err != nil {
 		return
 	}
+	if count != 0 {
+		err = fmt.Errorf("email already in use")
+		return
+	}
 	newUser.Password = utility.EncryptPassword(in.Password, consts.Salt)
-	_, err = dao.User.Ctx(ctx).Data(newUser).InsertAndGetId()
+	_, err = dao.User.Ctx(ctx).Data(newUser).Insert()
 	if err != nil {
 		return
 	}
@@ -54,9 +72,7 @@ func (s *sUser) Update(ctx context.Context, in model.UpdateInput) (out model.Upd
 	uid = gconv.String(ctx.Value(consts.CtxUserId))
 	_, err = dao.User.Ctx(ctx).Where(
 		dao.User.Columns().Uid, uid,
-	).Where(
-		dao.User.Columns().Deleted, false,
-	).Update(in)
+	).Data(in).Update()
 	if err != nil {
 		return
 	}
@@ -73,12 +89,10 @@ func (s *sUser) GetList(ctx context.Context, in model.GetListInput) (out model.G
 	)
 	out.Size = in.Size
 	out.Page = in.Page
-	m = dao.User.Ctx(ctx).Where(
-		dao.User.Columns().Deleted, false,
-	).WhereLike(
-		dao.User.Columns().Uid, "%"+in.NameOrUid+"%",
+	m = dao.User.Ctx(ctx).WhereLike(
+		dao.User.Columns().Uid, "%"+in.NameOrId+"%",
 	).WhereOrLike(
-		dao.User.Columns().Name, "%"+in.NameOrUid+"%",
+		dao.User.Columns().Name, "%"+in.NameOrId+"%",
 	).Page(in.Page, in.Size)
 	out.Total, err = m.Count()
 	if err != nil || out.Total == 0 {
@@ -91,34 +105,36 @@ func (s *sUser) GetList(ctx context.Context, in model.GetListInput) (out model.G
 
 func (s *sUser) GetContactList(ctx context.Context, in model.GetContactListInput) (out model.GetContactListOutput, err error) {
 	var (
-		uid string
-		m   *gdb.Model
+		uid    string
+		m      *gdb.Model
+		userM  *gdb.Model
+		groupM *gdb.Model
 	)
 	out.Size = in.Size
 	out.Page = in.Page
 	uid = gconv.String(ctx.Value(consts.CtxUserId))
-	m = dao.UserContacts.Ctx(ctx).Where(
-		dao.UserContacts.Columns().Deleted, false,
-	).With(model.UserInfoItem{}).With(model.UserGroupItem{}).Where(
+	m = dao.UserContacts.Ctx(ctx).WithAll().Where(
 		dao.UserContacts.Columns().Uid, uid,
-	).Where(
-		dao.User.Columns().Deleted, false,
-	).Where(
-		dao.UserGroup.Columns().Deleted, false,
 	)
-	if in.NameOrUid != "" {
-		m = m.Where(
-			dao.User.Columns().Uid, in.NameOrUid,
-		).WhereOr(
-			dao.User.Columns().Name, in.NameOrUid,
-		).WhereOr(
-			dao.UserGroup.Columns().Name, in.NameOrUid,
-		).WhereOr(
-			dao.UserGroup.Columns().Gid, in.NameOrUid,
+	if in.NameOrId != "" {
+		userM = dao.User.Ctx(ctx).Fields(dao.User.Columns().Uid).WhereLike(
+			dao.User.Columns().Uid, "%"+in.NameOrId+"%",
+		).WhereOrLike(
+			dao.User.Columns().Name, "%"+in.NameOrId+"%",
+		)
+		groupM = dao.UserGroup.Ctx(ctx).Fields(dao.UserGroup.Columns().Gid).WhereLike(
+			dao.UserGroup.Columns().Gid, "%"+in.NameOrId+"%",
+		).WhereOrLike(
+			dao.UserGroup.Columns().Name, "%"+in.NameOrId+"%",
+		)
+		m = m.WhereIn(
+			dao.UserContacts.Columns().ContactId, userM,
+		).WhereOrIn(
+			dao.UserContacts.Columns().ContactId, groupM,
 		)
 	}
 	m = m.OrderDesc(
-		dao.UserContacts.Columns().Utime,
+		dao.UserContacts.Columns().UpdatedAt,
 	).Page(in.Page, in.Size)
 	out.Total, err = m.Count()
 	if err != nil || out.Total == 0 {
@@ -137,10 +153,8 @@ func (s *sUser) GetContactApplicationList(ctx context.Context, in model.GetConta
 	out.Size = in.Size
 	out.Page = in.Page
 	uid = gconv.String(ctx.Value(consts.CtxUserId))
-	m = dao.ContactApplication.Ctx(ctx).Where(
+	m = dao.ContactApplication.Ctx(ctx).WithAll().Where(
 		dao.ContactApplication.Columns().ContactId, uid,
-	).Where(
-		dao.ContactApplication.Columns().Deleted, false,
 	).Page(in.Page, in.Size)
 	out.Total, err = m.Count()
 	if err != nil || out.Total == 0 {
@@ -153,6 +167,7 @@ func (s *sUser) GetContactApplicationList(ctx context.Context, in model.GetConta
 
 func (s *sUser) SetContactApplication(ctx context.Context, in model.SetContactApplicationInput) (out model.SetContactApplicationOutput, err error) {
 	var (
+		count          int
 		appId          string
 		newApplication entity.ContactApplication
 	)
@@ -165,7 +180,21 @@ func (s *sUser) SetContactApplication(ctx context.Context, in model.SetContactAp
 		Notice:      in.Notice,
 		Status:      consts.ApplicationWaitStatus,
 	}
-	_, err = dao.ContactApplication.Ctx(ctx).Data(newApplication).InsertAndGetId()
+	count, err = dao.ContactApplication.Ctx(ctx).Where(
+		dao.ContactApplication.Columns().Uid, newApplication.Uid,
+	).Where(
+		dao.ContactApplication.Columns().ContactId, newApplication.ContactId,
+	).Where(
+		dao.ContactApplication.Columns().Status, consts.ApplicationWaitStatus,
+	).Count()
+	if err != nil {
+		return
+	}
+	if count != 0 {
+		err = fmt.Errorf("the request has been submitted, please do not resubmit")
+		return
+	}
+	_, err = dao.ContactApplication.Ctx(ctx).Data(newApplication).Insert()
 	if err != nil {
 		return
 	}
@@ -174,10 +203,46 @@ func (s *sUser) SetContactApplication(ctx context.Context, in model.SetContactAp
 }
 
 func (s *sUser) UpdateContactApplication(ctx context.Context, in model.UpdateContactApplicationInput) (out model.UpdateContactApplicationOutput, err error) {
-	_, err = dao.ContactApplication.Ctx(ctx).Where(
-		dao.ContactApplication.Columns().AppId, in.AppId,
+	var (
+		tx          gdb.TX
+		application entity.ContactApplication
+	)
+	tx, err = g.DB().Begin(ctx)
+	if err != nil {
+		return
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		} else {
+			_ = tx.Commit()
+		}
+	}()
+	_, err = dao.ContactApplication.Ctx(ctx).TX(tx).Data(
+		dao.ContactApplication.Columns().Status, in.Status,
 	).Where(
-		dao.ContactApplication.Columns().Deleted, false,
-	).Update(dao.ContactApplication.Columns().Status, in.Status)
+		dao.ContactApplication.Columns().AppId, in.AppId,
+	).Update()
+	if in.Status == consts.ApplicationAgreeStatus {
+		err = dao.ContactApplication.Ctx(ctx).TX(tx).Where(
+			dao.ContactApplication.Columns().AppId, in.AppId,
+		).Scan(&application)
+		if err != nil {
+			return
+		}
+		_, err = dao.UserContacts.Ctx(ctx).TX(tx).Data(entity.UserContacts{
+			Cid:         uuid.New().String(),
+			Uid:         application.Uid,
+			ContactId:   application.ContactId,
+			ContactType: application.ContactType,
+		}).Insert()
+		_, err = dao.UserContacts.Ctx(ctx).TX(tx).Data(entity.UserContacts{
+			Cid:         uuid.New().String(),
+			Uid:         application.ContactId,
+			ContactId:   application.Uid,
+			ContactType: application.ContactType,
+		}).Insert()
+	}
+
 	return
 }

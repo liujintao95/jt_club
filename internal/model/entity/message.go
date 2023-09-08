@@ -12,9 +12,9 @@ import (
 type Message struct {
 	Id           uint64      `json:"id"           ` //
 	MessageId    string      `json:"messageId"    ` //
-	Ctime        *gtime.Time `json:"ctime"        ` //
-	Utime        *gtime.Time `json:"utime"        ` //
-	Deleted      int         `json:"deleted"      ` //
+	CreatedAt    *gtime.Time `json:"createdAt"    ` //
+	UpdatedAt    *gtime.Time `json:"updatedAt"    ` //
+	DeletedAt    int         `json:"deletedAt"    ` //
 	Avatar       string      `json:"avatar"       ` //
 	FromUsername string      `json:"fromUsername" ` //
 	From         string      `json:"from"         ` //

@@ -13,16 +13,17 @@ func (c *ControllerV1) GetContactList(ctx context.Context, req *v1.GetContactLis
 		out model.GetContactListOutput
 	)
 	out, err = service.User().GetContactList(ctx, model.GetContactListInput{
-		NameOrUid: req.NameOrId,
-		Page:      req.Page,
-		Size:      req.Size,
+		NameOrId: req.NameOrId,
+		Page:     req.Page,
+		Size:     req.Size,
 	})
 	if err != nil {
 		return nil, err
 	}
-	res.Page = out.Page
-	res.Size = out.Size
-	res.Total = out.Total
-	res.Contacts = out.Contacts
-	return res, nil
+	return &v1.GetContactListRes{
+		Page:     out.Page,
+		Size:     out.Size,
+		Total:    out.Total,
+		Contacts: out.Contacts,
+	}, nil
 }
