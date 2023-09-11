@@ -85,7 +85,7 @@ func TestGetList(t *testing.T) {
 	})
 }
 
-func TestSetContactApplication(t *testing.T) {
+func TestCreateContactApplication(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
 		var resp Resp
 		headerMap, err := GetLoginClient()
@@ -96,7 +96,7 @@ func TestSetContactApplication(t *testing.T) {
 			"ContactType": consts.ContactsUserType,
 			"Notice":      "加加加",
 		}
-		content := client.PostContent(context.Background(), "/user/contact/application", data)
+		content := client.PostContent(context.Background(), "/user/contact/application/create", data)
 		fmt.Println(content)
 		err = gconv.Struct(content, &resp)
 		t.AssertNil(err)
@@ -132,7 +132,7 @@ func TestUpdateContactApplication(t *testing.T) {
 			"app_id": "865d0269-b1da-4880-9d62-aef37f74a4c5",
 			"status": 1,
 		}
-		content := client.PostContent(context.Background(), "/user/contact/confirm", data)
+		content := client.PostContent(context.Background(), "/user/contact/confirm/update", data)
 		fmt.Println(content)
 		err = gconv.Struct(content, &resp)
 		t.AssertNil(err)
@@ -152,6 +152,25 @@ func TestGetContactList(t *testing.T) {
 			"name_or_id": "01",
 		}
 		content := client.PostContent(context.Background(), "/user/contact/list", data)
+		fmt.Println(content)
+		err = gconv.Struct(content, &resp)
+		t.AssertNil(err)
+		t.Assert(resp.Code, 0)
+	})
+}
+
+func TestCreateUserGroup(t *testing.T) {
+	gtest.C(t, func(t *gtest.T) {
+		var resp Resp
+		headerMap, err := GetLoginClient()
+		t.AssertNil(err)
+		client := g.Client().SetPrefix(Prefix).Header(headerMap)
+		data := g.Map{
+			"name":   "锦涛社",
+			"avatar": "123123",
+			"Notice": "锦涛社",
+		}
+		content := client.PostContent(context.Background(), "/user/group/create", data)
 		fmt.Println(content)
 		err = gconv.Struct(content, &resp)
 		t.AssertNil(err)

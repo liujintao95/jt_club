@@ -104,13 +104,13 @@ type GetContactApplicationListOutput struct {
 	Total        int `json:"total" description:"数据总数"`
 }
 
-type SetContactApplicationInput struct {
+type CreateContactApplicationInput struct {
 	ContactId   string `json:"contact_id" description:"请求对象ID"`
 	ContactType uint   `json:"contact_type" description:"请求对象类型"`
 	Notice      string `json:"notice" description:"备注"`
 }
 
-type SetContactApplicationOutput struct {
+type CreateContactApplicationOutput struct {
 	AppID string `json:"app_id" description:"请求ID"`
 }
 
@@ -130,4 +130,14 @@ type UserGroupMapItem struct {
 	Gid    string
 	User   UserInfoItem  `json:"user" orm:"with:uid=uid"`
 	Group  UserGroupItem `json:"user_group" orm:"with:gid=git"`
+}
+
+type CreateUserGroupInput struct {
+	Name   string `json:"name" description:"群名"`
+	Avatar string `json:"avatar" description:"群头像"`
+	Notice string `json:"notice" description:"群备注"`
+}
+
+type CreateUserGroupOutput struct {
+	Gid string `json:"gid" description:"群ID"`
 }

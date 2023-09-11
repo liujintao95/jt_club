@@ -16,8 +16,9 @@ type IUserV1 interface {
 	GetList(ctx context.Context, req *v1.GetListReq) (res *v1.GetListRes, err error)
 	GetContactList(ctx context.Context, req *v1.GetContactListReq) (res *v1.GetContactListRes, err error)
 	GetContactApplicationList(ctx context.Context, req *v1.GetContactApplicationListReq) (res *v1.GetContactApplicationListRes, err error)
-	SetContactApplication(ctx context.Context, req *v1.SetContactApplicationReq) (res *v1.SetContactApplicationRes, err error)
+	CreateContactApplication(ctx context.Context, req *v1.CreateContactApplicationReq) (res *v1.CreateContactApplicationRes, err error)
 	UpdateContactApplication(ctx context.Context, req *v1.UpdateContactApplicationReq) (res *v1.UpdateContactApplicationRes, err error)
+	CreateUserGroup(ctx context.Context, req *v1.CreateUserGroupReq) (res *v1.CreateUserGroupRes, err error)
 }
 
 

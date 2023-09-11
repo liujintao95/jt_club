@@ -80,20 +80,29 @@ type GetContactApplicationListRes struct {
 	Total        int `json:"total" description:"数据总数" v:"required"`
 }
 
-type SetContactApplicationReq struct {
-	g.Meta      `path:"/contact/application" method:"post" summary:"申请添加联系人"`
+type CreateContactApplicationReq struct {
+	g.Meta      `path:"/contact/application/create" method:"post" summary:"申请添加联系人"`
 	ContactId   string `json:"contact_id" description:"申请对象ID" v:"required"`
 	ContactType uint   `json:"contact_type" description:"申请类型" v:"required"`
 	Notice      string `json:"notice" description:"申请备注" v:"required"`
 }
 
-type SetContactApplicationRes struct{}
+type CreateContactApplicationRes struct{}
 
 type UpdateContactApplicationReq struct {
-	g.Meta `path:"/contact/confirm" method:"post" summary:"审批添加联系人信息"`
-	AppId  string `json:"app_id" v:"required"`
-	Status uint   `json:"status" v:"required"`
+	g.Meta `path:"/contact/confirm/update" method:"post" summary:"审批添加联系人信息"`
+	AppId  string `json:"app_id" description:"申请ID" v:"required"`
+	Status uint   `json:"status" description:"状态" v:"required"`
 	Notice string `json:"notice" description:"备注"`
 }
 
 type UpdateContactApplicationRes struct{}
+
+type CreateUserGroupReq struct {
+	g.Meta `path:"/group/create" method:"post" summary:"新建群"`
+	Name   string `json:"name" description:"群名" v:"required"`
+	Avatar string `json:"avatar" description:"群头像" v:"required"`
+	Notice string `json:"notice" description:"群备注"`
+}
+
+type CreateUserGroupRes struct{}

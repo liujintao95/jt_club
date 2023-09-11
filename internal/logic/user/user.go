@@ -152,7 +152,7 @@ func (s *sUser) GetContactApplicationList(ctx context.Context, in model.GetConta
 	return out, err
 }
 
-func (s *sUser) SetContactApplication(ctx context.Context, in model.SetContactApplicationInput) (out model.SetContactApplicationOutput, err error) {
+func (s *sUser) CreateContactApplication(ctx context.Context, in model.CreateContactApplicationInput) (out model.CreateContactApplicationOutput, err error) {
 	var (
 		count          int
 		appId          string
@@ -267,5 +267,24 @@ func (s *sUser) UpdateContactApplication(ctx context.Context, in model.UpdateCon
 			}).Insert()
 		}
 	}
+	return
+}
+
+func (s *sUser) CreateUserGroup(ctx context.Context, in model.CreateUserGroupInput) (out model.CreateUserGroupOutput, err error) {
+	var (
+		newGroup entity.UserGroup
+	)
+	newGroup = entity.UserGroup{
+		Gid:     uuid.New().String(),
+		Name:    in.Name,
+		Avatar:  in.Avatar,
+		Notice:  in.Notice,
+		AdminId: gconv.String(ctx.Value(consts.CtxUserId)),
+	}
+	_, err = dao.UserGroup.Ctx(ctx).Data(newGroup).Insert()
+	if err != nil {
+		return
+	}
+	out.Gid = newGroup.Gid
 	return
 }

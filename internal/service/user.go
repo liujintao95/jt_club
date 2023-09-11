@@ -17,8 +17,9 @@ type (
 		GetList(ctx context.Context, in model.GetListInput) (out model.GetListOutput, err error)
 		GetContactList(ctx context.Context, in model.GetContactListInput) (out model.GetContactListOutput, err error)
 		GetContactApplicationList(ctx context.Context, in model.GetContactApplicationListInput) (out model.GetContactApplicationListOutput, err error)
-		SetContactApplication(ctx context.Context, in model.SetContactApplicationInput) (out model.SetContactApplicationOutput, err error)
+		CreateContactApplication(ctx context.Context, in model.CreateContactApplicationInput) (out model.CreateContactApplicationOutput, err error)
 		UpdateContactApplication(ctx context.Context, in model.UpdateContactApplicationInput) (out model.UpdateContactApplicationOutput, err error)
+		CreateUserGroup(ctx context.Context, in model.CreateUserGroupInput) (out model.CreateUserGroupOutput, err error)
 	}
 )
 
