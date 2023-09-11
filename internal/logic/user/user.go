@@ -84,22 +84,14 @@ func (s *sUser) Update(ctx context.Context, in model.UpdateInput) (out model.Upd
 }
 
 func (s *sUser) GetList(ctx context.Context, in model.GetListInput) (out model.GetListOutput, err error) {
-	var (
-		m *gdb.Model
-	)
 	out.Size = in.Size
 	out.Page = in.Page
-	m = dao.User.Ctx(ctx).WhereLike(
+	out.Users = make([]model.UserInfoItem, 0, in.Size)
+	err = dao.User.Ctx(ctx).WhereLike(
 		dao.User.Columns().Uid, "%"+in.NameOrId+"%",
 	).WhereOrLike(
 		dao.User.Columns().Name, "%"+in.NameOrId+"%",
-	).Page(in.Page, in.Size)
-	out.Total, err = m.Count()
-	if err != nil || out.Total == 0 {
-		return out, err
-	}
-	out.Users = make([]model.UserInfoItem, 0, in.Size)
-	err = m.Scan(&out.Users)
+	).Page(in.Page, in.Size).ScanAndCount(&out.Users, &out.Total, true)
 	return out, err
 }
 
@@ -110,6 +102,7 @@ func (s *sUser) GetContactList(ctx context.Context, in model.GetContactListInput
 	)
 	out.Size = in.Size
 	out.Page = in.Page
+	out.Contacts = make([]model.ContactInfoItem, 0, in.Size)
 	uid = gconv.String(ctx.Value(consts.CtxUserId))
 	m = dao.UserContacts.Ctx(ctx).WithAll().Where(
 		dao.UserContacts.Columns().Uid, uid,
@@ -125,15 +118,9 @@ func (s *sUser) GetContactList(ctx context.Context, in model.GetContactListInput
 			),
 		)
 	}
-	m = m.OrderDesc(
+	err = m.OrderDesc(
 		dao.UserContacts.Columns().UpdatedAt,
-	).Page(in.Page, in.Size)
-	out.Total, err = m.Count()
-	if err != nil || out.Total == 0 {
-		return out, err
-	}
-	out.Contacts = make([]model.ContactInfoItem, 0, in.Size)
-	err = m.Scan(&out.Contacts)
+	).Page(in.Page, in.Size).ScanAndCount(&out.Contacts, &out.Total, true)
 	return out, err
 }
 
@@ -143,6 +130,7 @@ func (s *sUser) GetContactApplicationList(ctx context.Context, in model.GetConta
 		m    *gdb.Model
 		subM *gdb.Model
 	)
+	out.Applications = make([]model.ContactApplicationItem, 0, in.Size)
 	out.Size = in.Size
 	out.Page = in.Page
 	uid = gconv.String(ctx.Value(consts.CtxUserId))
@@ -150,24 +138,17 @@ func (s *sUser) GetContactApplicationList(ctx context.Context, in model.GetConta
 		dao.ContactApplication.Columns().ContactType, in.ContactType,
 	)
 	if in.ContactType == consts.ContactsUserType {
-		m = m.WhereIn(
-			dao.ContactApplication.Columns().ContactId, uid,
-		)
+		m = m.WhereIn(dao.ContactApplication.Columns().ContactId, uid)
 	} else if in.ContactType == consts.ContactsGroupType {
 		subM = dao.UserGroup.Ctx(ctx).Fields(dao.UserGroup.Columns().Gid).Where(
 			dao.UserGroup.Columns().AdminId, uid,
 		)
-		m = m.Where(
-			dao.ContactApplication.Columns().ContactId, subM,
-		)
+		m = m.Where(dao.ContactApplication.Columns().ContactId, subM)
 	}
-	m = m.Page(in.Page, in.Size)
-	out.Total, err = m.Count()
+	err = m.Page(in.Page, in.Size).ScanAndCount(&out.Applications, &out.Total, true)
 	if err != nil || out.Total == 0 {
 		return out, err
 	}
-	out.Applications = make([]model.ContactApplicationItem, 0, in.Size)
-	err = m.Scan(&out.Applications)
 	return out, err
 }
 
