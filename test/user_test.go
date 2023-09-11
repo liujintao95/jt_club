@@ -147,8 +147,9 @@ func TestGetContactList(t *testing.T) {
 		t.AssertNil(err)
 		client := g.Client().SetPrefix(Prefix).Header(headerMap)
 		data := g.Map{
-			"Page": 1,
-			"Size": 10,
+			"Page":       1,
+			"Size":       10,
+			"name_or_id": "01",
 		}
 		content := client.PostContent(context.Background(), "/user/contact/list", data)
 		fmt.Println(content)

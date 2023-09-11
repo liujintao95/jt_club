@@ -81,8 +81,9 @@ type GetContactListOutput struct {
 }
 
 type GetContactApplicationListInput struct {
-	Page int `json:"page" description:"分页码"`
-	Size int `json:"size" description:"分页数量"`
+	ContactType uint `json:"contact_type" description:"申请类型"`
+	Page        int  `json:"page" description:"分页码"`
+	Size        int  `json:"size" description:"分页数量"`
 }
 
 type ContactApplicationItem struct {
@@ -90,9 +91,10 @@ type ContactApplicationItem struct {
 	AppId       string
 	Uid         string
 	ContactId   string
-	ContactType string
-	Status      int
-	User        *UserInfoItem `orm:"with:uid=uid"`
+	ContactType uint
+	Status      uint
+	Notice      string
+	User        UserInfoItem `orm:"with:uid=uid"`
 }
 
 type GetContactApplicationListOutput struct {
@@ -115,6 +117,7 @@ type SetContactApplicationOutput struct {
 type UpdateContactApplicationInput struct {
 	AppId  string `json:"app_id" description:"请求ID"`
 	Status uint   `json:"status" description:"状态信息"`
+	Notice string `json:"notice" description:"备注"`
 }
 
 type UpdateContactApplicationOutput struct {

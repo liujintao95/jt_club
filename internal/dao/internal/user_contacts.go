@@ -28,6 +28,7 @@ type UserContactsColumns struct {
 	DeletedAt    string //
 	ContactId    string //
 	ContactType  string //
+	ContactName  string //
 	ContactNotes string //
 	LastMsg      string //
 	LastTime     string //
@@ -43,6 +44,7 @@ var userContactsColumns = UserContactsColumns{
 	DeletedAt:    "deleted_at",
 	ContactId:    "contact_id",
 	ContactType:  "contact_type",
+	ContactName:  "contact_name",
 	ContactNotes: "contact_notes",
 	LastMsg:      "last_msg",
 	LastTime:     "last_time",

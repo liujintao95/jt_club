@@ -105,10 +105,8 @@ func (s *sUser) GetList(ctx context.Context, in model.GetListInput) (out model.G
 
 func (s *sUser) GetContactList(ctx context.Context, in model.GetContactListInput) (out model.GetContactListOutput, err error) {
 	var (
-		uid    string
-		m      *gdb.Model
-		userM  *gdb.Model
-		groupM *gdb.Model
+		uid string
+		m   *gdb.Model
 	)
 	out.Size = in.Size
 	out.Page = in.Page
@@ -117,20 +115,14 @@ func (s *sUser) GetContactList(ctx context.Context, in model.GetContactListInput
 		dao.UserContacts.Columns().Uid, uid,
 	)
 	if in.NameOrId != "" {
-		userM = dao.User.Ctx(ctx).Fields(dao.User.Columns().Uid).WhereLike(
-			dao.User.Columns().Uid, "%"+in.NameOrId+"%",
-		).WhereOrLike(
-			dao.User.Columns().Name, "%"+in.NameOrId+"%",
-		)
-		groupM = dao.UserGroup.Ctx(ctx).Fields(dao.UserGroup.Columns().Gid).WhereLike(
-			dao.UserGroup.Columns().Gid, "%"+in.NameOrId+"%",
-		).WhereOrLike(
-			dao.UserGroup.Columns().Name, "%"+in.NameOrId+"%",
-		)
-		m = m.WhereIn(
-			dao.UserContacts.Columns().ContactId, userM,
-		).WhereOrIn(
-			dao.UserContacts.Columns().ContactId, groupM,
+		m = m.Where(
+			m.Builder().WhereLike(
+				dao.UserContacts.Columns().ContactId, "%"+in.NameOrId+"%",
+			).WhereOrLike(
+				dao.UserContacts.Columns().ContactName, "%"+in.NameOrId+"%",
+			).WhereOrLike(
+				dao.UserContacts.Columns().ContactNotes, "%"+in.NameOrId+"%",
+			),
 		)
 	}
 	m = m.OrderDesc(
@@ -147,15 +139,29 @@ func (s *sUser) GetContactList(ctx context.Context, in model.GetContactListInput
 
 func (s *sUser) GetContactApplicationList(ctx context.Context, in model.GetContactApplicationListInput) (out model.GetContactApplicationListOutput, err error) {
 	var (
-		uid string
-		m   *gdb.Model
+		uid  string
+		m    *gdb.Model
+		subM *gdb.Model
 	)
 	out.Size = in.Size
 	out.Page = in.Page
 	uid = gconv.String(ctx.Value(consts.CtxUserId))
 	m = dao.ContactApplication.Ctx(ctx).WithAll().Where(
-		dao.ContactApplication.Columns().ContactId, uid,
-	).Page(in.Page, in.Size)
+		dao.ContactApplication.Columns().ContactType, in.ContactType,
+	)
+	if in.ContactType == consts.ContactsUserType {
+		m = m.WhereIn(
+			dao.ContactApplication.Columns().ContactId, uid,
+		)
+	} else if in.ContactType == consts.ContactsGroupType {
+		subM = dao.UserGroup.Ctx(ctx).Fields(dao.UserGroup.Columns().Gid).Where(
+			dao.UserGroup.Columns().AdminId, uid,
+		)
+		m = m.Where(
+			dao.ContactApplication.Columns().ContactId, subM,
+		)
+	}
+	m = m.Page(in.Page, in.Size)
 	out.Total, err = m.Count()
 	if err != nil || out.Total == 0 {
 		return out, err
@@ -204,9 +210,13 @@ func (s *sUser) SetContactApplication(ctx context.Context, in model.SetContactAp
 
 func (s *sUser) UpdateContactApplication(ctx context.Context, in model.UpdateContactApplicationInput) (out model.UpdateContactApplicationOutput, err error) {
 	var (
-		tx          gdb.TX
-		application entity.ContactApplication
+		ctxUserName  string
+		tx           gdb.TX
+		application  model.ContactApplicationItem
+		contactUser  model.UserInfoItem
+		contactGroup model.UserGroupItem
 	)
+	ctxUserName = gconv.String(ctx.Value(consts.CtxUserName))
 	tx, err = g.DB().Begin(ctx)
 	if err != nil {
 		return
@@ -224,25 +234,57 @@ func (s *sUser) UpdateContactApplication(ctx context.Context, in model.UpdateCon
 		dao.ContactApplication.Columns().AppId, in.AppId,
 	).Update()
 	if in.Status == consts.ApplicationAgreeStatus {
-		err = dao.ContactApplication.Ctx(ctx).TX(tx).Where(
+		err = dao.ContactApplication.Ctx(ctx).WithAll().TX(tx).Where(
 			dao.ContactApplication.Columns().AppId, in.AppId,
 		).Scan(&application)
 		if err != nil {
 			return
 		}
-		_, err = dao.UserContacts.Ctx(ctx).TX(tx).Data(entity.UserContacts{
-			Cid:         uuid.New().String(),
-			Uid:         application.Uid,
-			ContactId:   application.ContactId,
-			ContactType: application.ContactType,
-		}).Insert()
-		_, err = dao.UserContacts.Ctx(ctx).TX(tx).Data(entity.UserContacts{
-			Cid:         uuid.New().String(),
-			Uid:         application.ContactId,
-			ContactId:   application.Uid,
-			ContactType: application.ContactType,
-		}).Insert()
+		if application.ContactType == consts.ContactsUserType {
+			err = dao.User.Ctx(ctx).Where(
+				dao.User.Columns().Uid, application.ContactId,
+			).Scan(&contactUser)
+			if err != nil {
+				return
+			}
+			_, err = dao.UserContacts.Ctx(ctx).TX(tx).Data(
+				entity.UserContacts{
+					Cid:          uuid.New().String(),
+					Uid:          application.Uid,
+					ContactId:    application.ContactId,
+					ContactType:  application.ContactType,
+					ContactNotes: application.Notice,
+					ContactName:  ctxUserName,
+				}, entity.UserContacts{
+					Cid:          uuid.New().String(),
+					Uid:          application.ContactId,
+					ContactId:    application.Uid,
+					ContactType:  application.ContactType,
+					ContactNotes: in.Notice,
+					ContactName:  application.User.Name,
+				},
+			).Insert()
+		} else if application.ContactType == consts.ContactsGroupType {
+			err = dao.UserGroup.Ctx(ctx).Where(
+				dao.UserGroup.Columns().Gid, application.ContactId,
+			).Scan(&contactGroup)
+			if err != nil {
+				return
+			}
+			_, err = dao.UserContacts.Ctx(ctx).TX(tx).Data(entity.UserContacts{
+				Cid:          uuid.New().String(),
+				Uid:          application.Uid,
+				ContactId:    contactGroup.Gid,
+				ContactType:  application.ContactType,
+				ContactNotes: application.Notice,
+				ContactName:  contactGroup.Name,
+			}).Insert()
+			_, err = dao.UserGroupMap.Ctx(ctx).TX(tx).Data(entity.UserGroupMap{
+				MapId: uuid.New().String(),
+				Uid:   contactUser.Uid,
+				Gid:   contactGroup.Gid,
+			}).Insert()
+		}
 	}
-
 	return
 }

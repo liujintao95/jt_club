@@ -67,9 +67,10 @@ type GetContactListRes struct {
 }
 
 type GetContactApplicationListReq struct {
-	g.Meta `path:"/contact/application/list" method:"post" summary:"申请添加联系人"`
-	Page   int `json:"page" description:"分页码" v:"required"`
-	Size   int `json:"size" description:"分页数量" v:"required"`
+	g.Meta      `path:"/contact/application/list" method:"post" summary:"申请添加联系人"`
+	ContactType uint `json:"contact_type" description:"申请类型" v:"required"`
+	Page        int  `json:"page" description:"分页码" v:"required"`
+	Size        int  `json:"size" description:"分页数量" v:"required"`
 }
 
 type GetContactApplicationListRes struct {
@@ -81,9 +82,9 @@ type GetContactApplicationListRes struct {
 
 type SetContactApplicationReq struct {
 	g.Meta      `path:"/contact/application" method:"post" summary:"申请添加联系人"`
-	ContactId   string `json:"contact_id" v:"required"`
-	ContactType uint   `json:"contact_type" v:"required"`
-	Notice      string `json:"notice" v:"required"`
+	ContactId   string `json:"contact_id" description:"申请对象ID" v:"required"`
+	ContactType uint   `json:"contact_type" description:"申请类型" v:"required"`
+	Notice      string `json:"notice" description:"申请备注" v:"required"`
 }
 
 type SetContactApplicationRes struct{}
@@ -92,6 +93,7 @@ type UpdateContactApplicationReq struct {
 	g.Meta `path:"/contact/confirm" method:"post" summary:"审批添加联系人信息"`
 	AppId  string `json:"app_id" v:"required"`
 	Status uint   `json:"status" v:"required"`
+	Notice string `json:"notice" description:"备注"`
 }
 
 type UpdateContactApplicationRes struct{}

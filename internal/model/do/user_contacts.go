@@ -20,6 +20,7 @@ type UserContacts struct {
 	DeletedAt    interface{} //
 	ContactId    interface{} //
 	ContactType  interface{} //
+	ContactName  interface{} //
 	ContactNotes interface{} //
 	LastMsg      interface{} //
 	LastTime     *gtime.Time //
