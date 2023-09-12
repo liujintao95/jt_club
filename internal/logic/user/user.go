@@ -288,3 +288,47 @@ func (s *sUser) CreateUserGroup(ctx context.Context, in model.CreateUserGroupInp
 	out.Gid = newGroup.Gid
 	return
 }
+
+func (s *sUser) UpdateUserGroup(ctx context.Context, in model.UpdateUserGroupInput) (out model.UpdateUserGroupOutput, err error) {
+	var (
+		mapCount int
+		group    entity.UserGroup
+		m        *gdb.Model
+	)
+	err = dao.UserGroup.Ctx(ctx).Where(dao.UserGroup.Columns().Gid, in.Gid).Scan(&group)
+	if err != nil {
+		return
+	}
+	if group.AdminId != gconv.String(ctx.Value(consts.CtxUserId)) {
+		err = fmt.Errorf("only administrators can modify")
+		return
+	}
+
+	m = dao.UserGroup.Ctx(ctx)
+	if in.Name != "" {
+		m = m.Data(dao.UserGroup.Columns().Name, in.Name)
+	}
+	if in.Avatar != "" {
+		m = m.Data(dao.UserGroup.Columns().Avatar, in.Avatar)
+	}
+	if in.Notice != "" {
+		m = m.Data(dao.UserGroup.Columns().Notice, in.Notice)
+	}
+	if in.AdminId != "" {
+		mapCount, err = dao.UserGroupMap.Ctx(ctx).Where(
+			dao.UserGroupMap.Columns().Gid, in.Gid,
+		).Where(
+			dao.UserGroupMap.Columns().Uid, in.AdminId,
+		).Count()
+		if err != nil {
+			return
+		}
+		if mapCount == 0 {
+			err = fmt.Errorf("administrators can only be group members")
+			return
+		}
+		m = m.Data(dao.UserGroup.Columns().AdminId, in.AdminId)
+	}
+	_, err = m.Where(dao.UserGroup.Columns().Gid, in.Gid).Update()
+	return
+}

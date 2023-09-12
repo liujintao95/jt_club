@@ -19,6 +19,7 @@ type IUserV1 interface {
 	CreateContactApplication(ctx context.Context, req *v1.CreateContactApplicationReq) (res *v1.CreateContactApplicationRes, err error)
 	UpdateContactApplication(ctx context.Context, req *v1.UpdateContactApplicationReq) (res *v1.UpdateContactApplicationRes, err error)
 	CreateUserGroup(ctx context.Context, req *v1.CreateUserGroupReq) (res *v1.CreateUserGroupRes, err error)
+	UpdateUserGroup(ctx context.Context, req *v1.UpdateUserGroupReq) (res *v1.UpdateUserGroupRes, err error)
 }
 
 

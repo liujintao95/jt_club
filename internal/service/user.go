@@ -20,6 +20,7 @@ type (
 		CreateContactApplication(ctx context.Context, in model.CreateContactApplicationInput) (out model.CreateContactApplicationOutput, err error)
 		UpdateContactApplication(ctx context.Context, in model.UpdateContactApplicationInput) (out model.UpdateContactApplicationOutput, err error)
 		CreateUserGroup(ctx context.Context, in model.CreateUserGroupInput) (out model.CreateUserGroupOutput, err error)
+		UpdateUserGroup(ctx context.Context, in model.UpdateUserGroupInput) (out model.UpdateUserGroupOutput, err error)
 	}
 )
 

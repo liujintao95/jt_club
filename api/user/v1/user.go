@@ -106,3 +106,14 @@ type CreateUserGroupReq struct {
 }
 
 type CreateUserGroupRes struct{}
+
+type UpdateUserGroupReq struct {
+	g.Meta  `path:"/group/update" method:"post" summary:"修改群信息"`
+	Gid     string `json:"gid" description:"群ID" v:"required"`
+	Name    string `json:"name" description:"群名"`
+	Avatar  string `json:"avatar" description:"群头像"`
+	Notice  string `json:"notice" description:"群备注"`
+	AdminId string `json:"admin_id" description:"群管理"`
+}
+
+type UpdateUserGroupRes struct{}

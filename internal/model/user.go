@@ -141,3 +141,14 @@ type CreateUserGroupInput struct {
 type CreateUserGroupOutput struct {
 	Gid string `json:"gid" description:"群ID"`
 }
+
+type UpdateUserGroupInput struct {
+	Gid     string `json:"gid" description:"群ID" v:"required"`
+	Name    string `json:"name" description:"群名"`
+	Avatar  string `json:"avatar" description:"群头像"`
+	Notice  string `json:"notice" description:"群备注"`
+	AdminId string `json:"admin_id" description:"群管理"`
+}
+
+type UpdateUserGroupOutput struct {
+}
