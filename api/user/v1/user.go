@@ -66,6 +66,13 @@ type GetContactListRes struct {
 	Total    int `json:"total" description:"数据总数"`
 }
 
+type DeleteContactReq struct {
+	g.Meta `path:"/contact/delete" method:"post" summary:"删除联系人"`
+	Uid    string `json:"uid" description:"联系人Uid" v:"required"`
+}
+
+type DeleteContactRes struct{}
+
 type GetContactApplicationListReq struct {
 	g.Meta      `path:"/contact/application/list" method:"post" summary:"申请添加联系人"`
 	ContactType uint `json:"contact_type" description:"申请类型" v:"required"`
@@ -117,3 +124,10 @@ type UpdateUserGroupReq struct {
 }
 
 type UpdateUserGroupRes struct{}
+
+type DeleteUserGroupMapReq struct {
+	g.Meta `path:"/group/exit" method:"post" summary:"退出群聊"`
+	Gid    string `json:"gid" description:"群ID" v:"required"`
+}
+
+type DeleteUserGroupMapRes struct{}

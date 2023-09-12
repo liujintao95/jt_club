@@ -21,6 +21,8 @@ type (
 		UpdateContactApplication(ctx context.Context, in model.UpdateContactApplicationInput) (out model.UpdateContactApplicationOutput, err error)
 		CreateUserGroup(ctx context.Context, in model.CreateUserGroupInput) (out model.CreateUserGroupOutput, err error)
 		UpdateUserGroup(ctx context.Context, in model.UpdateUserGroupInput) (out model.UpdateUserGroupOutput, err error)
+		DeleteContact(ctx context.Context, in model.DeleteContactInput) (out model.DeleteContactOutput, err error)
+		DeleteUserGroupMap(ctx context.Context, in model.DeleteUserGroupMapInput) (out model.DeleteUserGroupMapOutput, err error)
 	}
 )
 

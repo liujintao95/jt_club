@@ -80,6 +80,13 @@ type GetContactListOutput struct {
 	Total    int `json:"total" description:"数据总数"`
 }
 
+type DeleteContactInput struct {
+	Uid string `json:"uid" description:"联系人Uid"`
+}
+
+type DeleteContactOutput struct {
+}
+
 type GetContactApplicationListInput struct {
 	ContactType uint `json:"contact_type" description:"申请类型"`
 	Page        int  `json:"page" description:"分页码"`
@@ -151,4 +158,11 @@ type UpdateUserGroupInput struct {
 }
 
 type UpdateUserGroupOutput struct {
+}
+
+type DeleteUserGroupMapInput struct {
+	Gid string `json:"gid" description:"群ID"`
+}
+
+type DeleteUserGroupMapOutput struct {
 }

@@ -332,3 +332,71 @@ func (s *sUser) UpdateUserGroup(ctx context.Context, in model.UpdateUserGroupInp
 	_, err = m.Where(dao.UserGroup.Columns().Gid, in.Gid).Update()
 	return
 }
+
+func (s *sUser) DeleteContact(ctx context.Context, in model.DeleteContactInput) (out model.DeleteContactOutput, err error) {
+	var (
+		tx gdb.TX
+	)
+	tx, err = g.DB().Begin(ctx)
+	if err != nil {
+		return
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		} else {
+			_ = tx.Commit()
+		}
+	}()
+	_, err = dao.UserContacts.Ctx(ctx).TX(tx).Where(
+		dao.UserContacts.Columns().Uid, gconv.String(ctx.Value(consts.CtxUserId)),
+	).Where(
+		dao.UserContacts.Columns().ContactId, in.Uid,
+	).Where(
+		dao.UserContacts.Columns().ContactType, consts.ContactsUserType,
+	).Delete()
+	_, err = dao.UserContacts.Ctx(ctx).TX(tx).Where(
+		dao.UserContacts.Columns().Uid, in.Uid,
+	).Where(
+		dao.UserContacts.Columns().ContactId, gconv.String(ctx.Value(consts.CtxUserId)),
+	).Where(
+		dao.UserContacts.Columns().ContactType, consts.ContactsUserType,
+	).Delete()
+	return
+}
+
+func (s *sUser) DeleteUserGroupMap(ctx context.Context, in model.DeleteUserGroupMapInput) (out model.DeleteUserGroupMapOutput, err error) {
+	var (
+		membersCount int
+		tx           gdb.TX
+	)
+	tx, err = g.DB().Begin(ctx)
+	if err != nil {
+		return
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		} else {
+			_ = tx.Commit()
+		}
+	}()
+	_, err = dao.UserGroupMap.Ctx(ctx).TX(tx).Where(
+		dao.UserGroupMap.Columns().Uid, gconv.String(ctx.Value(consts.CtxUserId)),
+	).Where(
+		dao.UserGroupMap.Columns().Gid, in.Gid,
+	).Delete()
+	if err != nil {
+		return
+	}
+	membersCount, err = dao.UserGroupMap.Ctx(ctx).TX(tx).Where(
+		dao.UserGroupMap.Columns().Gid, in.Gid,
+	).Count()
+	if err != nil {
+		return
+	}
+	if membersCount == 0 {
+		_, err = dao.UserGroup.Ctx(ctx).TX(tx).Delete(dao.UserGroup.Columns().Gid, in.Gid)
+	}
+	return
+}
