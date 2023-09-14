@@ -14,7 +14,7 @@ type UserGroup struct {
 	Gid       string      `json:"gid"       ` //
 	CreatedAt *gtime.Time `json:"createdAt" ` //
 	UpdatedAt *gtime.Time `json:"updatedAt" ` //
-	DeletedAt uint        `json:"deletedAt" ` //
+	DeletedAt *gtime.Time `json:"deletedAt" ` //
 	Name      string      `json:"name"      ` //
 	AdminId   string      `json:"adminId"   ` //
 	Notice    string      `json:"notice"    ` //

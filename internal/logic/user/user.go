@@ -272,16 +272,43 @@ func (s *sUser) UpdateContactApplication(ctx context.Context, in model.UpdateCon
 
 func (s *sUser) CreateUserGroup(ctx context.Context, in model.CreateUserGroupInput) (out model.CreateUserGroupOutput, err error) {
 	var (
-		newGroup entity.UserGroup
+		currentUid string
+		tx         gdb.TX
+		newGroup   entity.UserGroup
 	)
+	tx, err = g.DB().Begin(ctx)
+	if err != nil {
+		return
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		} else {
+			_ = tx.Commit()
+		}
+	}()
+	currentUid = gconv.String(ctx.Value(consts.CtxUserId))
 	newGroup = entity.UserGroup{
 		Gid:     uuid.New().String(),
 		Name:    in.Name,
 		Avatar:  in.Avatar,
 		Notice:  in.Notice,
-		AdminId: gconv.String(ctx.Value(consts.CtxUserId)),
+		AdminId: currentUid,
 	}
-	_, err = dao.UserGroup.Ctx(ctx).Data(newGroup).Insert()
+	_, err = dao.UserGroup.Ctx(ctx).TX(tx).Data(newGroup).Insert()
+	_, err = dao.UserGroupMap.Ctx(ctx).TX(tx).Data(entity.UserGroupMap{
+		MapId: uuid.New().String(),
+		Gid:   newGroup.Gid,
+		Uid:   currentUid,
+	}).Insert()
+	_, err = dao.UserContacts.Ctx(ctx).TX(tx).Data(entity.UserContacts{
+		Cid:          uuid.New().String(),
+		Uid:          currentUid,
+		ContactId:    newGroup.Gid,
+		ContactType:  consts.ContactsGroupType,
+		ContactNotes: newGroup.Notice,
+		ContactName:  newGroup.Name,
+	}).Insert()
 	if err != nil {
 		return
 	}
@@ -397,6 +424,7 @@ func (s *sUser) DeleteUserGroupMap(ctx context.Context, in model.DeleteUserGroup
 	}
 	if membersCount == 0 {
 		_, err = dao.UserGroup.Ctx(ctx).TX(tx).Delete(dao.UserGroup.Columns().Gid, in.Gid)
+		_, err = dao.UserContacts.Ctx(ctx).TX(tx).Delete(dao.UserContacts.Columns().ContactId, in.Gid)
 	}
 	return
 }

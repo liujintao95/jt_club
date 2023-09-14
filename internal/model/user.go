@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
-	"time"
+	"github.com/gogf/gf/v2/os/gtime"
 )
 
 type RegisterInput struct {
@@ -12,7 +12,7 @@ type RegisterInput struct {
 }
 
 type RegisterOutput struct {
-	Id string
+	Id string `json:"id"`
 }
 
 type UpdateInput struct {
@@ -34,10 +34,10 @@ type GetListInput struct {
 
 type UserInfoItem struct {
 	g.Meta `orm:"table:user"`
-	Uid    string
-	Name   string
-	Email  string
-	Avatar string
+	Uid    string `json:"uid"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	Avatar string `json:"avatar"`
 }
 
 type GetListOutput struct {
@@ -55,20 +55,20 @@ type GetContactListInput struct {
 
 type UserGroupItem struct {
 	g.Meta  `orm:"table:user_group"`
-	Gid     string
-	Name    string
-	AdminId string
-	Notice  string
-	Avatar  string
+	Gid     string `json:"gid"`
+	Name    string `json:"name"`
+	AdminId string `json:"adminId"`
+	Notice  string `json:"notice"`
+	Avatar  string `json:"avatar"`
 }
 
 type ContactInfoItem struct {
 	g.Meta       `orm:"table:user_contacts"`
-	ContactId    string
-	ContactType  int
-	ContactNotes string
-	LastMsg      string
-	LastTime     time.Time
+	ContactId    string        `json:"contact_id"`
+	ContactType  int           `json:"contact_type"`
+	ContactNotes string        `json:"contact_notes"`
+	LastMsg      string        `json:"last_msg"`
+	LastTime     *gtime.Time   `json:"last_time"`
 	User         UserInfoItem  `json:"user" orm:"with:uid=contact_id"`
 	Group        UserGroupItem `json:"user_group" orm:"with:gid=contact_id"`
 }
@@ -95,12 +95,12 @@ type GetContactApplicationListInput struct {
 
 type ContactApplicationItem struct {
 	g.Meta      `orm:"table:contact_application"`
-	AppId       string
-	Uid         string
-	ContactId   string
-	ContactType uint
-	Status      uint
-	Notice      string
+	AppId       string       `json:"app_id"`
+	Uid         string       `json:"uid"`
+	ContactId   string       `json:"contact_id"`
+	ContactType uint         `json:"contact_type"`
+	Status      uint         `json:"status"`
+	Notice      string       `json:"notice"`
 	User        UserInfoItem `orm:"with:uid=uid"`
 }
 
@@ -132,9 +132,9 @@ type UpdateContactApplicationOutput struct {
 
 type UserGroupMapItem struct {
 	g.Meta `orm:"table:user_group_map"`
-	MapId  string
-	Uid    string
-	Gid    string
+	MapId  string        `json:"map_id"`
+	Uid    string        `json:"uid"`
+	Gid    string        `json:"gid"`
 	User   UserInfoItem  `json:"user" orm:"with:uid=uid"`
 	Group  UserGroupItem `json:"user_group" orm:"with:gid=git"`
 }

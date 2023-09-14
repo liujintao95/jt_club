@@ -13,7 +13,7 @@ type User struct {
 	Id        uint64      `json:"id"        ` //
 	CreatedAt *gtime.Time `json:"createdAt" ` //
 	UpdatedAt *gtime.Time `json:"updatedAt" ` //
-	DeletedAt uint        `json:"deletedAt" ` //
+	DeletedAt *gtime.Time `json:"deletedAt" ` //
 	Uid       string      `json:"uid"       ` //
 	Name      string      `json:"name"      ` //
 	Email     string      `json:"email"     ` //

@@ -14,7 +14,7 @@ import (
 
 const (
 	Prefix   = "http://127.0.0.1:5000"
-	Account  = "admin@jt.com"
+	Account  = "471151015@qq.com"
 	Password = "123456"
 )
 
@@ -147,9 +147,8 @@ func TestGetContactList(t *testing.T) {
 		t.AssertNil(err)
 		client := g.Client().SetPrefix(Prefix).Header(headerMap)
 		data := g.Map{
-			"Page":       1,
-			"Size":       10,
-			"name_or_id": "01",
+			"Page": 1,
+			"Size": 10,
 		}
 		content := client.PostContent(context.Background(), "/user/contact/list", data)
 		fmt.Println(content)
@@ -167,7 +166,7 @@ func TestCreateUserGroup(t *testing.T) {
 		client := g.Client().SetPrefix(Prefix).Header(headerMap)
 		data := g.Map{
 			"name":   "锦涛社",
-			"avatar": "123123",
+			"avatar": "123",
 			"Notice": "锦涛社",
 		}
 		content := client.PostContent(context.Background(), "/user/group/create", data)

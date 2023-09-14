@@ -13,7 +13,7 @@ type UserGroupMap struct {
 	Id        uint64      `json:"id"        ` //
 	CreatedAt *gtime.Time `json:"createdAt" ` //
 	UpdatedAt *gtime.Time `json:"updatedAt" ` //
-	DeletedAt uint        `json:"deletedAt" ` //
+	DeletedAt *gtime.Time `json:"deletedAt" ` //
 	MapId     string      `json:"mapId"     ` //
 	Gid       string      `json:"gid"       ` //
 	Uid       string      `json:"uid"       ` //

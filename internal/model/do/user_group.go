@@ -16,7 +16,7 @@ type UserGroup struct {
 	Gid       interface{} //
 	CreatedAt *gtime.Time //
 	UpdatedAt *gtime.Time //
-	DeletedAt interface{} //
+	DeletedAt *gtime.Time //
 	Name      interface{} //
 	AdminId   interface{} //
 	Notice    interface{} //

@@ -15,7 +15,7 @@ type ContactApplication struct {
 	Id          interface{} //
 	CreatedAt   *gtime.Time //
 	UpdatedAt   *gtime.Time //
-	DeletedAt   interface{} //
+	DeletedAt   *gtime.Time //
 	AppId       interface{} //
 	Uid         interface{} //
 	ContactId   interface{} //

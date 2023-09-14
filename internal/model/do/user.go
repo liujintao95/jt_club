@@ -15,7 +15,7 @@ type User struct {
 	Id        interface{} //
 	CreatedAt *gtime.Time //
 	UpdatedAt *gtime.Time //
-	DeletedAt interface{} //
+	DeletedAt *gtime.Time //
 	Uid       interface{} //
 	Name      interface{} //
 	Email     interface{} //

@@ -13,7 +13,7 @@ type ContactApplication struct {
 	Id          uint64      `json:"id"          ` //
 	CreatedAt   *gtime.Time `json:"createdAt"   ` //
 	UpdatedAt   *gtime.Time `json:"updatedAt"   ` //
-	DeletedAt   uint        `json:"deletedAt"   ` //
+	DeletedAt   *gtime.Time `json:"deletedAt"   ` //
 	AppId       string      `json:"appId"       ` //
 	Uid         string      `json:"uid"         ` //
 	ContactId   string      `json:"contactId"   ` //

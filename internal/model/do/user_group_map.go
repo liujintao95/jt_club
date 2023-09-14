@@ -15,7 +15,7 @@ type UserGroupMap struct {
 	Id        interface{} //
 	CreatedAt *gtime.Time //
 	UpdatedAt *gtime.Time //
-	DeletedAt interface{} //
+	DeletedAt *gtime.Time //
 	MapId     interface{} //
 	Gid       interface{} //
 	Uid       interface{} //

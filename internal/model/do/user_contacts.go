@@ -17,7 +17,7 @@ type UserContacts struct {
 	Uid          interface{} //
 	CreatedAt    *gtime.Time //
 	UpdatedAt    *gtime.Time //
-	DeletedAt    interface{} //
+	DeletedAt    *gtime.Time //
 	ContactId    interface{} //
 	ContactType  interface{} //
 	ContactName  interface{} //

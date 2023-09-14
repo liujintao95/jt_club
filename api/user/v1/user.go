@@ -60,10 +60,10 @@ type GetContactListReq struct {
 }
 
 type GetContactListRes struct {
-	Contacts interface{}
-	Page     int `json:"page" description:"分页码"`
-	Size     int `json:"size" description:"分页数量"`
-	Total    int `json:"total" description:"数据总数"`
+	Contacts interface{} `json:"contacts"`
+	Page     int         `json:"page" description:"分页码"`
+	Size     int         `json:"size" description:"分页数量"`
+	Total    int         `json:"total" description:"数据总数"`
 }
 
 type DeleteContactReq struct {
