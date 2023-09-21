@@ -49,8 +49,6 @@ type GetListOutput struct {
 
 type GetContactListInput struct {
 	NameOrId string `json:"name_or_id" description:"名称或ID"`
-	Page     int    `json:"page" description:"分页码"`
-	Size     int    `json:"size" description:"分页数量"`
 }
 
 type UserGroupItem struct {
@@ -75,8 +73,6 @@ type ContactInfoItem struct {
 
 type GetContactListOutput struct {
 	Contacts []ContactInfoItem
-	Page     int `json:"page" description:"分页码"`
-	Size     int `json:"size" description:"分页数量"`
 	Total    int `json:"total" description:"数据总数"`
 }
 

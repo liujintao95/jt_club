@@ -100,9 +100,6 @@ func (s *sUser) GetContactList(ctx context.Context, in model.GetContactListInput
 		uid string
 		m   *gdb.Model
 	)
-	out.Size = in.Size
-	out.Page = in.Page
-	out.Contacts = make([]model.ContactInfoItem, 0, in.Size)
 	uid = gconv.String(ctx.Value(consts.CtxUserId))
 	m = dao.UserContacts.Ctx(ctx).WithAll().Where(
 		dao.UserContacts.Columns().Uid, uid,
@@ -120,7 +117,7 @@ func (s *sUser) GetContactList(ctx context.Context, in model.GetContactListInput
 	}
 	err = m.OrderDesc(
 		dao.UserContacts.Columns().UpdatedAt,
-	).Page(in.Page, in.Size).ScanAndCount(&out.Contacts, &out.Total, true)
+	).ScanAndCount(&out.Contacts, &out.Total, true)
 	return out, err
 }
 

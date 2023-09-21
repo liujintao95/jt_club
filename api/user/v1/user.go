@@ -55,14 +55,10 @@ type GetListRes struct {
 type GetContactListReq struct {
 	g.Meta   `path:"/contact/list" method:"post" summary:"查询联系人列表"`
 	NameOrId string `json:"name_or_id"`
-	Page     int    `json:"page" description:"分页码" v:"required"`
-	Size     int    `json:"size" description:"分页数量" v:"required"`
 }
 
 type GetContactListRes struct {
 	Contacts interface{} `json:"contacts"`
-	Page     int         `json:"page" description:"分页码"`
-	Size     int         `json:"size" description:"分页数量"`
 	Total    int         `json:"total" description:"数据总数"`
 }
 
