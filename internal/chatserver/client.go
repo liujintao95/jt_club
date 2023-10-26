@@ -53,10 +53,11 @@ func (c *Client) Read() {
 			g.Log().Error(c.Ctx, "proto unmarshal:"+err.Error())
 			continue
 		}
-		if msg.Type == consts.HeatBeatType {
+		g.Log().Info(c.Ctx, msg)
+		if msg.Type == consts.TransportTypeHeartBeat {
 			pong := &protocol.Message{
-				Content: consts.PongMsg,
-				Type:    consts.HeatBeatType,
+				Content: consts.MsgPong,
+				Type:    consts.TransportTypeHeartBeat,
 			}
 			pongBytes, err := proto.Marshal(pong)
 			if err != nil {

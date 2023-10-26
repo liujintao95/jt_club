@@ -5,15 +5,15 @@ const (
 	TokenType         = "Bearer"
 	CacheModeRedis    = 2
 	BackendServerName = "锦涛社"
-	MultiLogin        = true
+	MultiLogin        = false
 	GTokenExpireIn    = 10 * 24 * 60 * 60
 )
 
 const (
-	CodeMissingParameterMsg = "请检查是否缺少参数"
-	ErrLoginMsg             = "登录失败，账号或密码错误"
-	ErrSecretAnswerMsg      = "密保问题不正确"
-	ResourcePermissionFail  = "没有权限操作"
+	ErrCodeMissingParameterMsg = "请检查是否缺少参数"
+	ErrLoginMsg                = "登录失败，账号或密码错误"
+	ErrSecretAnswerMsg         = "密保问题不正确"
+	ErrResourcePermissionFail  = "没有权限操作"
 )
 
 const (
@@ -27,25 +27,25 @@ const (
 )
 
 const (
-	ContactsUserType  = iota
-	ContactsGroupType = iota
+	ContactsUserType = iota
+	ContactsGroupType
 )
 
 const (
-	ApplicationWaitStatus   = iota
-	ApplicationAgreeStatus  = iota
-	ApplicationRefuseStatus = iota
+	ApplicationWaitStatus = iota
+	ApplicationAgreeStatus
+	ApplicationRefuseStatus
 )
 
 const (
-	HeatBeatType = "heatbeat"
-	WebRTCType   = "webrtc"
-	NormalType   = "normal"
+	TransportTypeHeartBeat = "heartbeat"
+	TransportTypeWebRTC    = "webrtc"
+	TransportTypeNormal    = "normal"
 )
 
 const (
-	PongMsg    = "pong"
-	WelcomeMsg = "welcome to jt club!"
+	MsgPong    = "pong"
+	MsgWelcome = "欢迎登录锦涛社!"
 )
 
 const (
@@ -54,14 +54,16 @@ const (
 )
 
 const (
-	TextType = iota
-	FileType
-	PictureType
+	ContentTypeText = iota
+	ContentTypeFile
+	ContentTypePicture
+	ContentTypeAudio
+	ContentTypeVideo
 )
 
 const (
-	SingleChat = iota
-	GroupChat
+	ChatSingle = ContactsUserType
+	ChatGroup  = ContactsGroupType
 )
 
 const DefaultDuration = 60 * 60 * 8

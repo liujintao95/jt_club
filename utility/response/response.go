@@ -4,6 +4,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
+	"jt_chat/internal/consts"
 )
 
 // JsonRes 数据返回通用JSON数据结构
@@ -42,12 +43,7 @@ func dataReturn(r *ghttp.Request, code int, req ...interface{}) *JsonRes {
 	if len(req) > 1 {
 		data = req[1]
 	}
-	//msg = GetCodeMsg(code, msg)
-	if code != 1 && !gconv.Bool(r.GetCtxVar("api_code")) {
-		code = 0
-	}
 	response := &JsonRes{
-		//ID:      r.GetCtxVar("RequestId").String(),
 		Code:    code,
 		Message: msg,
 		Data:    data,
@@ -57,6 +53,7 @@ func dataReturn(r *ghttp.Request, code int, req ...interface{}) *JsonRes {
 }
 
 func Auth(r *ghttp.Request) {
-	res := dataReturn(r, 999, "请登录")
+	res := dataReturn(r, consts.CodeUnauthorized, "用户验证失败，请登录！")
+	r.Response.Status = 401
 	r.Response.WriteJsonExit(res)
 }

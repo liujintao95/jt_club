@@ -62,7 +62,7 @@ func (s *Server) Start() {
 				continue
 			}
 			s.saveMsg(msg)
-			if msg.MessageType == consts.SingleChat {
+			if msg.MessageType == consts.ChatSingle {
 				s.sendSingleMsg(msg)
 			} else {
 				s.sendGroupMsg(msg)
@@ -77,10 +77,10 @@ func (s *Server) registerClient(client *Client) {
 		FromUsername: consts.AdminName,
 		From:         consts.AdminUid,
 		To:           client.Uid,
-		Content:      consts.WelcomeMsg,
-		ContentType:  consts.TextType,
-		Type:         consts.NormalType,
-		MessageType:  consts.SingleChat,
+		Content:      consts.MsgWelcome,
+		ContentType:  consts.ContentTypeText,
+		Type:         consts.TransportTypeNormal,
+		MessageType:  consts.ChatSingle,
 	}
 	msgBytes, err := proto.Marshal(msg)
 	if err != nil {
