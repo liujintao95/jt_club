@@ -21,9 +21,9 @@ func (c *ControllerV1) GetList(ctx context.Context, req *v1.GetListReq) (res *v1
 		return nil, err
 	}
 	return &v1.GetListRes{
-		Page:  out.Page,
-		Size:  out.Size,
-		Total: out.Total,
 		Users: out.Users,
+		Page:  req.Page,
+		Size:  req.Size,
+		Total: out.Total,
 	}, nil
 }

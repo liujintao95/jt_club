@@ -46,10 +46,10 @@ type GetListReq struct {
 }
 
 type GetListRes struct {
-	Users interface{}
-	Page  int `json:"page" description:"分页码"`
-	Size  int `json:"size" description:"分页数量"`
-	Total int `json:"total" description:"数据总数"`
+	Users interface{} `json:"users" description:"用户列表"`
+	Page  int         `json:"page" description:"分页码"`
+	Size  int         `json:"size" description:"分页数量"`
+	Total int         `json:"total" description:"数据总数"`
 }
 
 type GetContactListReq struct {
@@ -58,7 +58,7 @@ type GetContactListReq struct {
 }
 
 type GetContactListRes struct {
-	Contacts interface{} `json:"contacts"`
+	Contacts interface{} `json:"contacts" description:"联系人列表"`
 	Total    int         `json:"total" description:"数据总数"`
 }
 
@@ -77,10 +77,10 @@ type GetContactApplicationListReq struct {
 }
 
 type GetContactApplicationListRes struct {
-	Applications interface{}
-	Page         int `json:"page" description:"分页码" v:"required"`
-	Size         int `json:"size" description:"分页数量" v:"required"`
-	Total        int `json:"total" description:"数据总数" v:"required"`
+	Applications interface{} `json:"applications" description:"联系人请求列表"`
+	Page         int         `json:"page" description:"分页码"`
+	Size         int         `json:"size" description:"分页数量"`
+	Total        int         `json:"total" description:"数据总数"`
 }
 
 type CreateContactApplicationReq struct {

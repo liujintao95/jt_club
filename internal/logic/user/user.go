@@ -84,8 +84,6 @@ func (s *sUser) Update(ctx context.Context, in model.UpdateInput) (out model.Upd
 }
 
 func (s *sUser) GetList(ctx context.Context, in model.GetListInput) (out model.GetListOutput, err error) {
-	out.Size = in.Size
-	out.Page = in.Page
 	out.Users = make([]model.UserInfoItem, 0, in.Size)
 	err = dao.User.Ctx(ctx).WhereLike(
 		dao.User.Columns().Uid, "%"+in.NameOrId+"%",
@@ -128,8 +126,6 @@ func (s *sUser) GetContactApplicationList(ctx context.Context, in model.GetConta
 		subM *gdb.Model
 	)
 	out.Applications = make([]model.ContactApplicationItem, 0, in.Size)
-	out.Size = in.Size
-	out.Page = in.Page
 	uid = gconv.String(ctx.Value(consts.CtxUserId))
 	m = dao.ContactApplication.Ctx(ctx).WithAll().Where(
 		dao.ContactApplication.Columns().ContactType, in.ContactType,

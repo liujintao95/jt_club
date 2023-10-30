@@ -5,5 +5,6 @@
 package logic
 
 import (
+	_ "jt_chat/internal/logic/chat"
 	_ "jt_chat/internal/logic/user"
 )

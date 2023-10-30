@@ -12,6 +12,7 @@ import (
 
 type IChatV1 interface {
 	Websocket(ctx context.Context, req *v1.WebsocketReq) (res *v1.WebsocketRes, err error)
+	GetHistoryMessage(ctx context.Context, req *v1.GetHistoryMessageReq) (res *v1.GetHistoryMessageRes, err error)
 }
 
 
