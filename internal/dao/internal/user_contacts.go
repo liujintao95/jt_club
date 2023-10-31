@@ -32,6 +32,8 @@ type UserContactsColumns struct {
 	ContactNotes string //
 	LastMsg      string //
 	LastTime     string //
+	LastMsgId    string //
+	NewMsgCount  string //
 }
 
 // userContactsColumns holds the columns for table user_contacts.
@@ -48,6 +50,8 @@ var userContactsColumns = UserContactsColumns{
 	ContactNotes: "contact_notes",
 	LastMsg:      "last_msg",
 	LastTime:     "last_time",
+	LastMsgId:    "last_msg_id",
+	NewMsgCount:  "new_msg_count",
 }
 
 // NewUserContactsDao creates and returns a new DAO object for table data access.

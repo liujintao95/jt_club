@@ -24,4 +24,6 @@ type UserContacts struct {
 	ContactNotes interface{} //
 	LastMsg      interface{} //
 	LastTime     *gtime.Time //
+	LastMsgId    interface{} //
+	NewMsgCount  interface{} //
 }

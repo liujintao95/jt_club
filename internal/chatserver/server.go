@@ -3,6 +3,7 @@ package chatserver
 import (
 	"context"
 	"fmt"
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/golang/protobuf/proto"
@@ -15,6 +16,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 )
 
 var ChatServer = NewSocketServer()
@@ -144,6 +146,7 @@ func (s *Server) saveMsg(msg *protocol.Message) {
 		messageId string
 		filePath  string
 		newMsg    entity.Message
+		tx        gdb.TX
 		err       error
 	)
 	messageId = uuid.New().String()
@@ -168,8 +171,56 @@ func (s *Server) saveMsg(msg *protocol.Message) {
 		FileSuffix:   msg.FileSuffix,
 		FilePath:     filePath,
 	}
-	_, err = dao.Message.Ctx(s.ctx).Data(newMsg).InsertAndGetId()
+
+	tx, err = g.DB().Begin(s.ctx)
 	if err != nil {
-		g.Log().Error(s.ctx, "save msg:"+err.Error())
+		g.Log().Error(s.ctx, "begin transaction:"+err.Error())
+		return
+	}
+	defer func() {
+		if err != nil {
+			g.Log().Error(s.ctx, "save msg:"+err.Error())
+			_ = tx.Rollback()
+		} else {
+			_ = tx.Commit()
+		}
+	}()
+	_, err = dao.Message.Ctx(s.ctx).TX(tx).Data(newMsg).InsertAndGetId()
+	if msg.MessageType == consts.ChatSingle {
+		_, err = dao.UserContacts.Ctx(s.ctx).TX(tx).Data(
+			dao.UserContacts.Columns().LastMsg, msg.Content,
+			dao.UserContacts.Columns().LastTime, time.Now(),
+		).Where(
+			dao.UserContacts.Ctx(s.ctx).Builder().Where(
+				dao.UserContacts.Columns().Uid, msg.To,
+			).Where(
+				dao.UserContacts.Columns().ContactId, msg.From,
+			),
+		).WhereOr(
+			dao.UserContacts.Ctx(s.ctx).Builder().Where(
+				dao.UserContacts.Columns().Uid, msg.From,
+			).Where(
+				dao.UserContacts.Columns().ContactId, msg.To,
+			),
+		).Update()
+		_, err = dao.UserContacts.Ctx(s.ctx).TX(tx).Where(
+			dao.UserContacts.Columns().Uid, msg.To,
+		).Where(
+			dao.UserContacts.Columns().ContactId, msg.From,
+		).Increment(dao.UserContacts.Columns().NewMsgCount, 1)
+	} else {
+		_, err = dao.UserContacts.Ctx(s.ctx).TX(tx).Data(
+			dao.UserContacts.Columns().LastMsg, msg.Content,
+			dao.UserContacts.Columns().LastTime, time.Now(),
+		).Where(
+			dao.UserContacts.Ctx(s.ctx).Builder().Where(
+				dao.UserContacts.Columns().ContactId, msg.To,
+			),
+		).Update()
+		_, err = dao.UserContacts.Ctx(s.ctx).TX(tx).WhereNot(
+			dao.UserContacts.Columns().Uid, msg.From,
+		).Where(
+			dao.UserContacts.Columns().ContactId, msg.To,
+		).Increment(dao.UserContacts.Columns().NewMsgCount, 1)
 	}
 }

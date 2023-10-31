@@ -22,4 +22,6 @@ type UserContacts struct {
 	ContactNotes string      `json:"contactNotes" ` //
 	LastMsg      string      `json:"lastMsg"      ` //
 	LastTime     *gtime.Time `json:"lastTime"     ` //
+	LastMsgId    string      `json:"lastMsgId"    ` //
+	NewMsgCount  uint        `json:"newMsgCount"  ` //
 }

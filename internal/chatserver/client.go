@@ -53,7 +53,6 @@ func (c *Client) Read() {
 			g.Log().Error(c.Ctx, "proto unmarshal:"+err.Error())
 			continue
 		}
-		g.Log().Info(c.Ctx, msg)
 		if msg.Type == consts.TransportTypeHeartBeat {
 			pong := &protocol.Message{
 				Content: consts.MsgPong,

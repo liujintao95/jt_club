@@ -4,7 +4,7 @@
 gfcli:
   gen:
     dao:
-      - link: "mysql:root:123456@tcp(127.0.0.1:3306)/jt_chat"
+      - link: "mysql:root:123456@tcp(127.0.0.1:3306)/jt_chat?loc=Local&parseTime=true"
 
   docker:
     build: "-a amd64 -s linux -p temp -ew"
