@@ -20,38 +20,38 @@ type UserContactsDao struct {
 
 // UserContactsColumns defines and stores column names for table user_contacts.
 type UserContactsColumns struct {
-	Id           string //
-	Cid          string //
-	Uid          string //
-	CreatedAt    string //
-	UpdatedAt    string //
-	DeletedAt    string //
-	ContactId    string //
-	ContactType  string //
-	ContactName  string //
-	ContactNotes string //
-	LastMsg      string //
-	LastTime     string //
-	LastMsgId    string //
-	NewMsgCount  string //
+	Id             string //
+	Cid            string //
+	Uid            string //
+	CreatedAt      string //
+	UpdatedAt      string //
+	DeletedAt      string //
+	ContactId      string //
+	ContactType    string //
+	ContactName    string //
+	ContactNotes   string //
+	LastMsg        string //
+	LastTime       string //
+	LastWatchMsgId string //
+	NewMsgCount    string //
 }
 
 // userContactsColumns holds the columns for table user_contacts.
 var userContactsColumns = UserContactsColumns{
-	Id:           "id",
-	Cid:          "cid",
-	Uid:          "uid",
-	CreatedAt:    "created_at",
-	UpdatedAt:    "updated_at",
-	DeletedAt:    "deleted_at",
-	ContactId:    "contact_id",
-	ContactType:  "contact_type",
-	ContactName:  "contact_name",
-	ContactNotes: "contact_notes",
-	LastMsg:      "last_msg",
-	LastTime:     "last_time",
-	LastMsgId:    "last_msg_id",
-	NewMsgCount:  "new_msg_count",
+	Id:             "id",
+	Cid:            "cid",
+	Uid:            "uid",
+	CreatedAt:      "created_at",
+	UpdatedAt:      "updated_at",
+	DeletedAt:      "deleted_at",
+	ContactId:      "contact_id",
+	ContactType:    "contact_type",
+	ContactName:    "contact_name",
+	ContactNotes:   "contact_notes",
+	LastMsg:        "last_msg",
+	LastTime:       "last_time",
+	LastWatchMsgId: "last_watch_msg_id",
+	NewMsgCount:    "new_msg_count",
 }
 
 // NewUserContactsDao creates and returns a new DAO object for table data access.

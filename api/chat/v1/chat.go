@@ -11,6 +11,7 @@ type WebsocketRes struct {
 
 type GetHistoryMessageReq struct {
 	g.Meta    `path:"/message/list" method:"post" summary:"获取联系人的历史聊天信息"`
+	MessageId string `json:"message_id" description:"起始ID"`
 	ContactId string `json:"contact_id" description:"聊天对象ID" v:"required"`
 	Page      int    `json:"page" description:"分页码" v:"required"`
 	Size      int    `json:"size" description:"分页数量" v:"required"`

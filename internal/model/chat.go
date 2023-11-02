@@ -3,6 +3,7 @@ package model
 import "github.com/gogf/gf/v2/frame/g"
 
 type GetHistoryMessageInput struct {
+	MessageId string `json:"message_id" description:"起始ID"`
 	ContactId string `json:"contact_id" description:"聊天对象ID"`
 	Page      int    `json:"page" description:"分页码"`
 	Size      int    `json:"size" description:"分页数量"`

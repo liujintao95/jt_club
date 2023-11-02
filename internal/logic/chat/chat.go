@@ -7,6 +7,7 @@ import (
 	"jt_chat/internal/consts"
 	"jt_chat/internal/dao"
 	"jt_chat/internal/model"
+	"jt_chat/internal/model/entity"
 	"jt_chat/internal/service"
 )
 
@@ -21,11 +22,20 @@ func New() *sChat {
 
 func (s *sChat) GetHistoryMessage(ctx context.Context, in model.GetHistoryMessageInput) (out model.GetHistoryMessageOutput, err error) {
 	var (
+		msg entity.Message
 		uid string
 		m   *gdb.Model
 	)
 	uid = gconv.String(ctx.Value(consts.CtxUserId))
-	m = dao.Message.Ctx(ctx)
+	if in.MessageId != "" {
+		err = dao.Message.Ctx(ctx).Where(dao.Message.Columns().MessageId, in.MessageId).Scan(&msg)
+		if err != nil {
+			return out, err
+		}
+		m = dao.Message.Ctx(ctx).WhereLT(dao.Message.Columns().Id, msg.Id)
+	} else {
+		m = dao.Message.Ctx(ctx)
+	}
 	err = m.Where(
 		m.Builder().Where(
 			dao.Message.Columns().From, uid,

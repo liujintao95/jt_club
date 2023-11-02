@@ -59,14 +59,16 @@ type UserGroupItem struct {
 }
 
 type ContactInfoItem struct {
-	g.Meta       `orm:"table:user_contacts"`
-	ContactId    string        `json:"contact_id"`
-	ContactType  int           `json:"contact_type"`
-	ContactNotes string        `json:"contact_notes"`
-	LastMsg      string        `json:"last_msg"`
-	LastTime     *gtime.Time   `json:"last_time"`
-	User         UserInfoItem  `json:"user" orm:"with:uid=contact_id"`
-	Group        UserGroupItem `json:"user_group" orm:"with:gid=contact_id"`
+	g.Meta         `orm:"table:user_contacts"`
+	ContactId      string        `json:"contact_id"`
+	ContactType    int           `json:"contact_type"`
+	ContactNotes   string        `json:"contact_notes"`
+	LastMsg        string        `json:"last_msg"`
+	LastTime       *gtime.Time   `json:"last_time"`
+	LastWatchMsgId string        `json:"last_watch_msg_id"`
+	NewMsgCount    uint          `json:"new_msg_count"`
+	User           UserInfoItem  `json:"user" orm:"with:uid=contact_id"`
+	Group          UserGroupItem `json:"user_group" orm:"with:gid=contact_id"`
 }
 
 type GetContactListOutput struct {

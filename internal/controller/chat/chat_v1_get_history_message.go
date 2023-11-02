@@ -13,6 +13,7 @@ func (c *ControllerV1) GetHistoryMessage(ctx context.Context, req *v1.GetHistory
 		out model.GetHistoryMessageOutput
 	)
 	out, err = service.Chat().GetHistoryMessage(ctx, model.GetHistoryMessageInput{
+		MessageId: req.MessageId,
 		ContactId: req.ContactId,
 		Page:      req.Page,
 		Size:      req.Size,
