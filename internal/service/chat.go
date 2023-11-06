@@ -13,6 +13,7 @@ import (
 type (
 	IChat interface {
 		GetHistoryMessage(ctx context.Context, in model.GetHistoryMessageInput) (out model.GetHistoryMessageOutput, err error)
+		GetNewMessage(ctx context.Context, in model.GetNewMessageInput) (out model.GetNewMessageOutput, err error)
 	}
 )
 

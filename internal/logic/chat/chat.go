@@ -57,3 +57,37 @@ func (s *sChat) GetHistoryMessage(ctx context.Context, in model.GetHistoryMessag
 	)
 	return out, err
 }
+
+func (s *sChat) GetNewMessage(ctx context.Context, in model.GetNewMessageInput) (out model.GetNewMessageOutput, err error) {
+	var (
+		msg entity.Message
+		uid string
+		m   *gdb.Model
+	)
+	uid = gconv.String(ctx.Value(consts.CtxUserId))
+	err = dao.Message.Ctx(ctx).Where(dao.Message.Columns().MessageId, in.MessageId).Scan(&msg)
+	if err != nil {
+		return out, err
+	}
+	m = dao.Message.Ctx(ctx).WhereGT(dao.Message.Columns().Id, msg.Id)
+	err = m.Where(
+		m.Builder().Where(
+			dao.Message.Columns().From, uid,
+		).Where(
+			dao.Message.Columns().To, in.ContactId,
+		),
+	).WhereOr(
+		m.Builder().Where(
+			dao.Message.Columns().From, in.ContactId,
+		).Where(
+			dao.Message.Columns().To, uid,
+		),
+	).OrderAsc(
+		dao.Message.Columns().CreatedAt,
+	).Limit(
+		in.Page, in.Size,
+	).ScanAndCount(
+		&out.Messages, &out.Total, true,
+	)
+	return out, err
+}
